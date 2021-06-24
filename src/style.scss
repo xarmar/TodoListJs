@@ -1,0 +1,30 @@
+@mixin flexRow {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#navBar {
+    font-size: 1.7rem;
+    @include flexRow();
+    background-color: blue;
+    #leftHeaderDiv {
+        @include flexRow();
+        margin-left: 2%;
+        background-color: green;
+        list-style-type: none;
+        #ulOptionsLeft {
+            @include flexRow();
+            list-style-type: none;
+        }
+
+    }
+    #rightHeaderDiv {
+        margin-right: 2%;
+        background-color: red;
+        #ulOptionsRight {
+            @include flexRow();
+            list-style-type: none;
+        }
+    }
+}
