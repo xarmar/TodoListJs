@@ -22,15 +22,6 @@ rightHeaderDiv.id = 'rightHeaderDiv';
 
 appendMultipleNodesToParent(navBar, leftHeaderDiv, rightHeaderDiv);
 
-// // Init ul's
-// const ulOptionsLeft = document.createElement('ul');
-// ulOptionsLeft.id = 'ulOptionsLeft';
-// leftHeaderDiv.appendChild(ulOptionsLeft);
-
-// const ulOptionsRight = document.createElement('ul');
-// rightHeaderDiv.appendChild(ulOptionsRight);
-// ulOptionsRight.id = 'ulOptionsRight';
-
 // Init left-li
 const expander = document.createElement('p');
 expander.innerText = '☰';
@@ -73,24 +64,40 @@ const generateGrid = () => {
 const populateLeftGrid = () => {
     let stickyLeftDiv = document.querySelector('#stickyLeftDiv');
 
-    const displayOptionsDiv = document.createElement('div');
-    displayOptionsDiv.id = 'leftContainer';
-    stickyLeftDiv.appendChild(displayOptionsDiv);
+    const todayTomorrowWeekDiv = document.createElement('div');
+    todayTomorrowWeekDiv.id = 'todayTomorrowWeekDiv';
+    stickyLeftDiv.appendChild(todayTomorrowWeekDiv);
 
     const optionsList = document.createElement('ul');
     optionsList.id = 'optionsList'
-    displayOptionsDiv.appendChild(optionsList);
+    todayTomorrowWeekDiv.appendChild(optionsList);
 
+    // populate day options
     const today = document.createElement('li');
     today.id = 'today';
     today.innerText = 'Today'
-    const thisWeek = document.createElement('li');
-    thisWeek.id = 'thisWeek';
-    thisWeek.innerText = 'This Week';
-    const nextWeek = document.createElement('li');
-    nextWeek.id = 'nextWeek';
-    nextWeek.innerText = 'Next Week';
-    appendMultipleNodesToParent(optionsList, today, thisWeek, nextWeek);
+    const tomorrow = document.createElement('li');
+    tomorrow.id = 'tomorrow';
+    tomorrow.innerText = 'Tomorrow';
+    const week = document.createElement('li');
+    week.id = 'week';
+    week.innerText = 'Week';
+    appendMultipleNodesToParent(optionsList, today, tomorrow, week);
+
+    // Init displayProjectsDiv
+    const displayProjectsDiv = document.createElement('div');
+    displayProjectsDiv.id = 'displayProjectsDiv';
+    stickyLeftDiv.appendChild(displayProjectsDiv);
+
+    // add projects options
+    const projects = document.createElement('p');
+    projects.id = 'projects';
+    projects.innerText = 'Projects'
+    const expandProjectsArrow = document.createElement('p');
+    expandProjectsArrow.id = 'expandProjectsArrow';
+    expandProjectsArrow.innerText = '\u{02C5}';
+    appendMultipleNodesToParent(displayProjectsDiv, projects, expandProjectsArrow);
+
 }
 
 return {
