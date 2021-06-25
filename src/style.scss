@@ -1,30 +1,72 @@
+// Colours
+$dark-purple: #361999;
+$cyan-blue: #78FFF1;
+$pink-attack: #FF6495;
+$light-grey: #f7f7f7;
+$white: white;
+
+
 @mixin flexRow {
     display:flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
+body {
+    background-color: $white;}
+
 #navBar {
-    font-size: 1.7rem;
+    height: 10vh;
+    font-size: 2.5em;
     @include flexRow();
-    background-color: blue;
+    background-color: $dark-purple;
+    p {
+        color: $cyan-blue;
+        border-radius: 15px;
+        line-height: 0px;
+        &:hover {
+            color: $pink-attack;
+            transform: scale(1.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+    }
     #leftHeaderDiv {
         @include flexRow();
         margin-left: 2%;
-        background-color: green;
-        list-style-type: none;
-        #ulOptionsLeft {
-            @include flexRow();
-            list-style-type: none;
-        }
-
     }
     #rightHeaderDiv {
-        margin-right: 2%;
-        background-color: red;
-        #ulOptionsRight {
-            @include flexRow();
+        @include flexRow();
+        margin-right: 4vw;
+        width: 100px;
+        }
+    }
+
+#gridDiv {
+    min-height: 89vh;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    grid-template-rows: 1fr;
+}
+
+#stickyLeftDiv {
+    background-color: $light-grey;
+    #leftContainer {
+        display: flex;
+        width: 100%;
+        #optionsList {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
             list-style-type: none;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            li {
+                padding: 5px;
+                margin-top: 10px;
+                font-size: 1.5em;
+            }
         }
     }
 }
