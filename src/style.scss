@@ -12,8 +12,17 @@ $white: white;
     justify-content: space-between;
 }
 
+@mixin leftGridHoverEffect {
+    cursor: pointer;
+    background-color: $white;
+    color: $dark-purple;
+    font-weight: 600;
+    transition: color 1s ease;
+}
+
 body {
-    background-color: $white;}
+    background-color: $white;
+}
 
 #navBar {
     height: 10vh;
@@ -21,14 +30,21 @@ body {
     @include flexRow();
     background-color: $dark-purple;
     p {
-        color: $cyan-blue;
+        color: $white;
         border-radius: 15px;
         line-height: 0px;
         &:hover {
-            color: $pink-attack;
-            transform: scale(1.1);
             cursor: pointer;
-            transition: all 0.2s ease;
+            animation-name: pinkHearbeatEffect;
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+        }
+        @keyframes pinkHearbeatEffect {
+            50% {
+                color: $pink-attack;
+                transform: scale(1.05);
+                transition: all 0.2s ease;
+            }
         }
     }
     #leftHeaderDiv {
@@ -49,24 +65,43 @@ body {
     grid-template-columns: 1fr 4fr;
     grid-template-rows: 1fr;
 }
-
+// Left side of Grid - TodayTomorrowWeekDiv and ProjectsDiv
 #stickyLeftDiv {
     background-color: $light-grey;
-    #leftContainer {
+    #todayTomorrowWeekDiv {
         display: flex;
         width: 100%;
-        #optionsList {
+        ul {
             width: 100%;
             display: flex;
             flex-direction: column;
             list-style-type: none;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            padding-left: 0px;
+            margin: 20px 0px 20px 30px;
             li {
-                padding: 5px;
-                margin-top: 10px;
+                margin-top: 15px;
                 font-size: 1.5em;
+                &:hover {
+                 @include leftGridHoverEffect();
+                }
+                &.selected {
+                    color: red;
+                }
             }
+        }
+    }
+    #displayProjectsDiv {
+        margin: 20px 0px 0px 20px;
+        @include flexRow();
+        p {
+            line-height: 0px;
+            font-size: 1.5em;
+        }
+        #expandProjectsArrow {
+            margin-right: 40px;
+        }
+        &:hover {
+            @include leftGridHoverEffect();
         }
     }
 }
