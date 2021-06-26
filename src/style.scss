@@ -25,7 +25,7 @@ body {
 }
 
 #navBar {
-    height: 10vh;
+    height: 80px;
     font-size: 2.5em;
     @include flexRow();
     background-color: $dark-purple;
@@ -49,17 +49,17 @@ body {
     }
     #leftHeaderDiv {
         @include flexRow();
-        margin-left: 2%;
+        margin: auto auto auto 2%;
     }
     #rightHeaderDiv {
         @include flexRow();
-        margin-right: 4vw;
+        margin: auto 4vw auto auto;
         width: 100px;
         }
     }
 
 #gridDiv {
-    min-height: 89vh;
+    min-height: calc(100vh - 80px);
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 4fr;
@@ -98,10 +98,18 @@ body {
             font-size: 1.5em;
         }
         #expandProjectsArrow {
-            margin-right: 40px;
+            margin-right: 5%;
         }
         &:hover {
             @include leftGridHoverEffect();
         }
     }
+}
+
+.displayNone {
+    display: none !important;
+}
+
+.expandGrid {
+    grid-template-columns: 0fr 5fr !important;
 }
