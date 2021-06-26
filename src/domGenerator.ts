@@ -1,6 +1,10 @@
 import { appendMultipleNodesToParent } from "./helperFunctions";
+import PubSub from 'pubsub-js';
 
 export const dom = (() => {
+
+// For PubsSub
+const expandButton = 'expandButton';
 
 const generateNavBar = () => {
 
@@ -26,6 +30,8 @@ appendMultipleNodesToParent(navBar, leftHeaderDiv, rightHeaderDiv);
 const expander = document.createElement('p');
 expander.innerText = '☰';
 expander.classList.add('navOption');
+expander.addEventListener('click', toggleSideBar)
+
 leftHeaderDiv.appendChild(expander);
 
 // Init right-li
@@ -99,6 +105,15 @@ const populateLeftGrid = () => {
     appendMultipleNodesToParent(displayProjectsDiv, projects, expandProjectsArrow);
 
 }
+
+// Function to hide leftSidebar
+const toggleSideBar = () => {
+    let grid: Node = document.querySelector('#gridDiv');
+    let stickyLeftDiv: Node = document.querySelector('#stickyLeftDiv');
+    PubSub.publish(expandButton, grid, stickyLeftDiv);
+}
+
+
 
 return {
     generateNavBar: generateNavBar,
