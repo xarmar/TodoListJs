@@ -56,7 +56,16 @@ body {
         margin: auto 4vw auto auto;
         width: 100px;
         }
-    }
+}
+
+.displayNone {
+    display: none !important;
+}
+
+.expandGrid {
+    grid-template-columns: 0fr 5fr !important;
+}
+
 
 #gridDiv {
     min-height: calc(100vh - 80px);
@@ -106,10 +115,45 @@ body {
     }
 }
 
-.displayNone {
-    display: none !important;
+#popUpDiv {
+    display: flex;
+    z-index: 9;
+    position: fixed;
+    top: 30%;
+    left: 40%;
+    border: 1px $dark-purple solid;
+    background-color: $light-grey;
+    width: 40%;
+    height: 240px;
+    #todoForm {
+        display: grid;
+        grid-template-areas: 
+    'popUpHeader popUpHeader'
+    'titleAndDescriptionDiv priorityAndDueDateDiv';
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 3fr;
+        width: 100%;
+        #popUpHeader {
+            grid-area: popUpHeader;
+            font-size: 1.4em;
+            text-align: center;
+        }
+        #titleAndDescriptionDiv {
+            grid-area: titleAndDescriptionDiv;
+            margin: 15px;
+            #titleField, #descriptionField {
+                display: flex;;
+                flex-direction: column;
+            }
+        }
+        #priorityAndDueDateDiv {
+            grid-area: priorityAndDueDateDiv;
+            margin: 15px;
+            #priorityField, #dueDateField {
+                display: flex;;
+                flex-direction: column;
+            }
+        }
+    }
 }
 
-.expandGrid {
-    grid-template-columns: 0fr 5fr !important;
-}
