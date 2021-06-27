@@ -12,11 +12,11 @@ export const todoModule = (() => {
         notes: string[];
         completed: boolean;
         
-        constructor(title: string, priority: Priority, description?: string) {
+        constructor(title: string, priority: Priority, dueDate: Date, description?: string) {
             this.title = title;
             this.priority = priority;
             this.description = description;
-            // this.dueDate = dueDate;
+            this.dueDate = dueDate;
             this.notes = null;
             this.completed = false;
         }
@@ -46,8 +46,8 @@ export const todoModule = (() => {
         }
     }
     
-    const newTodo = (title: string, priority: Priority, description?: string) => {
-        let newTodoObject = new Todo(title, priority, description);
+    const newTodo = (title: string, priority: Priority, dueDate: Date, description?: string) => {
+        let newTodoObject = new Todo(title, priority, dueDate, description);
         return newTodoObject;
     }
     
