@@ -1,5 +1,6 @@
 import { appendMultipleNodesToParent } from "./helperFunctions";
 import PubSub from 'pubsub-js';
+import { add } from "date-fns";
 
 export const dom = (() => {
 
@@ -145,6 +146,7 @@ const addTodoPopUp = () => {
     const titleInput = document.createElement('input');
     titleInput.id = 'titleInput'
     titleInput.setAttribute('type', 'text');
+    titleInput.required = true;
 
     appendMultipleNodesToParent(titleField, titleLabel, titleInput);
 
@@ -181,6 +183,7 @@ const addTodoPopUp = () => {
     // Give options to choose from:
     const select = document.createElement('select');
     select.id = 'priorityList';
+    select.required = true;
 
     const lowPriority = document.createElement('option');
     lowPriority.innerText = 'Low';
@@ -205,12 +208,14 @@ const addTodoPopUp = () => {
 
     const dueDateLabel = document.createElement('label');
     dueDateLabel.innerText = 'Due Date: ';
+    dueDateLabel.id = 'dueDateLabel';
     dueDateLabel.setAttribute('for', 'dueDateInput');
     dueDateLabel.setAttribute('aria-label', 'required');
 
     const dueDateInput = document.createElement('input');
     dueDateInput.id = 'dueDateInput';
-    dueDateInput.setAttribute('type', 'datetime-local');   
+    dueDateInput.setAttribute('type', 'date');   
+    dueDateInput.required = true;
 
     appendMultipleNodesToParent(dueDateField, dueDateLabel, dueDateInput);
 
@@ -219,24 +224,23 @@ const addTodoPopUp = () => {
     buttonsDiv.id = 'buttonsDiv';
     form.appendChild(buttonsDiv);
 
-    const addButton = document.createElement('p');
+    const addButton = document.createElement('button');
     addButton.id = 'addButton';
     addButton.innerText = 'Add';
 
-    const cancelButton = document.createElement('p');
+    const cancelButton = document.createElement('button');
+    cancelButton.addEventListener('click', closePopUp);
     cancelButton.id = 'cancelButton';
     cancelButton.innerText = 'Cancel';
 
     appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
-
-
-
 }
-
 
 // PUBSUB - Functions to hide leftSidebar
 const expandButton = 'expandButton';
+const popUpClose = 'popUpClose';
 
+// Expand Menu Clicked
 const PubSubExpanderClicked = () => {
     let grid: Node = document.querySelector('#gridDiv');
     let stickyLeftDiv: Node = document.querySelector('#stickyLeftDiv');
@@ -244,7 +248,6 @@ const PubSubExpanderClicked = () => {
 }
 
 const expandButtonListener = PubSub.subscribe(expandButton, function(expandButton, divsArray) {
-    console.log(expandButton);
     divsArray.forEach(div => {
         if (div.id === 'gridDiv') {
             div.classList.toggle('expandGrid')
@@ -255,11 +258,16 @@ const expandButtonListener = PubSub.subscribe(expandButton, function(expandButto
     });
 });
 
+// Close PopUp Task Button Clicked
+const closePopUp = () => {
+    let popUpDiv = document.querySelector('#popUpDiv');
+    PubSub.publish(popUpClose, popUpDiv);
+}
 
-
-
-
-
+const closePopUpListener = PubSub.subscribe(popUpClose, function(expandButton, popUpClose) {
+    popUpClose.remove();
+    showingPopUp = false;
+});
 
 return {
     generateNavBar: generateNavBar,
