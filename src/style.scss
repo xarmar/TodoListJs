@@ -4,6 +4,7 @@ $cyan-blue: #78FFF1;
 $pink-attack: #FF6495;
 $light-grey: #f7f7f7;
 $white: white;
+$black: black;
 
 
 @mixin flexRow {
@@ -12,12 +13,27 @@ $white: white;
     justify-content: space-between;
 }
 
+@mixin flexColumn {
+    display: flex;
+    flex-direction: column;
+}
+
 @mixin leftGridHoverEffect {
     cursor: pointer;
     background-color: $white;
     color: $dark-purple;
     font-weight: 600;
     transition: color 1s ease;
+}
+
+@mixin buttonBackground ($backgroundColor, $textColor) {
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+    padding: 15px;
+    text-align: center;
+    background-color: $backgroundColor;
+    color: $textColor;
 }
 
 body {
@@ -116,42 +132,65 @@ body {
 }
 
 #popUpDiv {
-    display: flex;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    top: 20%;
+    left: 0;
+    right: 0;
+    text-align: center;
     z-index: 9;
-    position: fixed;
-    top: 30%;
-    left: 40%;
+    width: fit-content;
     border: 1px $dark-purple solid;
     background-color: $light-grey;
-    width: 40%;
-    height: 240px;
+    height: fit-content;
     #todoForm {
         display: grid;
+        width: 10%;
         grid-template-areas: 
-    'popUpHeader popUpHeader'
-    'titleAndDescriptionDiv priorityAndDueDateDiv';
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 3fr;
-        width: 100%;
+    'popUpHeader'
+    'titleAndDescriptionDiv' 
+    'priorityAndDueDateDiv'
+    'buttonsDiv';
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 2fr;
+        width: fit-content;
         #popUpHeader {
             grid-area: popUpHeader;
-            font-size: 1.4em;
+            background-color: $light-grey;
+            width: fit-content;
+            margin: auto;
+            font-size: 1.3em;
+            font-weight: 800;
             text-align: center;
         }
         #titleAndDescriptionDiv {
             grid-area: titleAndDescriptionDiv;
-            margin: 15px;
+            margin: 10px;
             #titleField, #descriptionField {
-                display: flex;;
-                flex-direction: column;
+                @include flexColumn();
             }
         }
         #priorityAndDueDateDiv {
             grid-area: priorityAndDueDateDiv;
-            margin: 15px;
+            margin: 10px;
             #priorityField, #dueDateField {
-                display: flex;;
-                flex-direction: column;
+                @include flexColumn();
+            }
+        }
+        #buttonsDiv {
+            grid-area: buttonsDiv;
+            #addButton {
+                @include buttonBackground($dark-purple, $white);
+                &:hover {
+                    border: 5px dashed white
+                }
+            }
+            #cancelButton {
+                @include buttonBackground($pink-attack, $black);
+                &:hover {
+                    border: 5px dashed white
+                }
             }
         }
     }
