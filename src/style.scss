@@ -29,11 +29,18 @@ $black: black;
 @mixin buttonBackground ($backgroundColor, $textColor) {
     margin-left: auto;
     margin-right: auto;
-    width: 30%;
-    padding: 15px;
+    width: 40%;
+    padding: 10px;
     text-align: center;
+    border: 3px solid transparent;
     background-color: $backgroundColor;
     color: $textColor;
+}
+
+@mixin buttonHover ($hovercolor) {
+    cursor: pointer;
+    border: 3px solid $hovercolor;
+    transition: all 1s ease;
 }
 
 body {
@@ -141,12 +148,13 @@ body {
     text-align: center;
     z-index: 9;
     width: fit-content;
-    border: 1px $dark-purple solid;
+    border: 2px $dark-purple solid;
     background-color: $light-grey;
     height: fit-content;
     #todoForm {
         display: grid;
-        width: 10%;
+        width: fit-content;
+        margin-bottom: 10px;
         grid-template-areas: 
     'popUpHeader'
     'titleAndDescriptionDiv' 
@@ -154,7 +162,6 @@ body {
     'buttonsDiv';
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 2fr;
-        width: fit-content;
         #popUpHeader {
             grid-area: popUpHeader;
             background-color: $light-grey;
@@ -177,22 +184,31 @@ body {
             #priorityField, #dueDateField {
                 @include flexColumn();
             }
+            #dueDateInput {
+                margin-left: auto;
+                margin-right: auto;
+            }
         }
         #buttonsDiv {
             grid-area: buttonsDiv;
+            display: flex;
+            flex-direction: row;
             #addButton {
                 @include buttonBackground($dark-purple, $white);
                 &:hover {
-                    border: 5px dashed white
+                    @include buttonHover($pink-attack);
                 }
             }
             #cancelButton {
                 @include buttonBackground($pink-attack, $black);
                 &:hover {
-                    border: 5px dashed white
+                    @include buttonHover($dark-purple);
                 }
             }
         }
     }
 }
 
+input:invalid:required {
+  border: 1px solid $pink-attack;
+} 
