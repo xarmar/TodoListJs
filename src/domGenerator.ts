@@ -213,6 +213,24 @@ const addTodoPopUp = () => {
     dueDateInput.setAttribute('type', 'datetime-local');   
 
     appendMultipleNodesToParent(dueDateField, dueDateLabel, dueDateInput);
+
+    // Add Buttons
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.id = 'buttonsDiv';
+    form.appendChild(buttonsDiv);
+
+    const addButton = document.createElement('p');
+    addButton.id = 'addButton';
+    addButton.innerText = 'Add';
+
+    const cancelButton = document.createElement('p');
+    cancelButton.id = 'cancelButton';
+    cancelButton.innerText = 'Cancel';
+
+    appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
+
+
+
 }
 
 
