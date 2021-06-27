@@ -3,9 +3,6 @@ import PubSub from 'pubsub-js';
 
 export const dom = (() => {
 
-// For PubsSub
-const expandButton = 'expandButton';
-
 const generateNavBar = () => {
 
 // Create Header
@@ -30,7 +27,7 @@ appendMultipleNodesToParent(navBar, leftHeaderDiv, rightHeaderDiv);
 const expander = document.createElement('p');
 expander.innerText = '☰';
 expander.classList.add('navOption');
-expander.addEventListener('click', toggleSideBar)
+expander.addEventListener('click', PubSubExpanderClicked)
 
 leftHeaderDiv.appendChild(expander);
 
@@ -106,12 +103,32 @@ const populateLeftGrid = () => {
 
 }
 
-// Function to hide leftSidebar
-const toggleSideBar = () => {
+
+
+// PUBSUB - Functions to hide leftSidebar
+const expandButton = 'expandButton';
+
+const PubSubExpanderClicked = () => {
     let grid: Node = document.querySelector('#gridDiv');
     let stickyLeftDiv: Node = document.querySelector('#stickyLeftDiv');
-    PubSub.publish(expandButton, grid, stickyLeftDiv);
+    PubSub.publish(expandButton, [grid, stickyLeftDiv]);
 }
+
+const expandButtonListener = PubSub.subscribe(expandButton, function(expandButton, divsArray) {
+    console.log(expandButton);
+    divsArray.forEach(div => {
+        if (div.id === 'gridDiv') {
+            div.classList.toggle('expandGrid')
+        }
+        else {
+            div.classList.toggle('displayNone')
+        }
+    });
+});
+
+
+
+
 
 
 
