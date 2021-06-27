@@ -32,15 +32,16 @@ expander.addEventListener('click', PubSubExpanderClicked)
 leftHeaderDiv.appendChild(expander);
 
 // Init right-li
-const addTask = document.createElement('p');
-addTask.innerText = '+';
-addTask.classList.add('navOption')
+const addTodo = document.createElement('p');
+addTodo.innerText = '+';
+addTodo.classList.add('navOption');
+addTodo.addEventListener('click', addTodoPopUp);
 
 const history = document.createElement('p');
 history.innerText = '\u{1F56E}';
-history.classList.add('navOption')
+history.classList.add('navOption');
 
-appendMultipleNodesToParent(rightHeaderDiv, addTask, history);
+appendMultipleNodesToParent(rightHeaderDiv, addTodo, history);
 
 }
 
@@ -103,6 +104,116 @@ const populateLeftGrid = () => {
 
 }
 
+let showingPopUp = false;
+const addTodoPopUp = () => {
+    if (showingPopUp) {
+        return
+    }
+
+    showingPopUp = true;
+    let gridDiv = document.querySelector('#gridDiv');
+
+// Create PopUpDiv that will append to gridDiv
+    const popUpDiv = document.createElement('div');
+    popUpDiv.id = 'popUpDiv';
+    gridDiv.appendChild(popUpDiv);
+// Create Form where user will be prompted for choices
+    const form = document.createElement('form');
+    form.id = 'todoForm';
+    popUpDiv.appendChild(form);
+
+// Set Header at the top of the form
+    const popUpHeader = document.createElement('p');
+    popUpHeader.id = 'popUpHeader';
+    popUpHeader.innerText = 'Add New Todo'
+    form.appendChild(popUpHeader);
+
+// Init Div that will contain 'title' and 'description' of todo
+    const titleAndDescriptionDiv = document.createElement('div');
+    titleAndDescriptionDiv.id = 'titleAndDescriptionDiv';
+    form.appendChild(titleAndDescriptionDiv);
+
+// Ask user for 'title' of Todo
+    const titleField = document.createElement('p');
+    titleField.id = 'titleField';
+    titleAndDescriptionDiv.appendChild(titleField);
+    
+    const titleLabel = document.createElement('label');
+    titleLabel.innerText = 'Title: ';
+    titleLabel.setAttribute('for', 'titleInput');
+
+    const titleInput = document.createElement('input');
+    titleInput.id = 'titleInput'
+    titleInput.setAttribute('type', 'text');
+
+    appendMultipleNodesToParent(titleField, titleLabel, titleInput);
+
+// Ask user for 'description' of Todo
+    const descriptionField = document.createElement('p');
+    descriptionField.id = 'descriptionField';
+    titleAndDescriptionDiv.appendChild(descriptionField);
+
+    const descriptionLabel = document.createElement('label');
+    descriptionLabel.innerText = 'Description (optional) : ';
+    descriptionLabel.setAttribute('for', 'descriptionInput');
+
+    const descriptionInput = document.createElement('input');
+    descriptionInput.id = 'descriptionInput';
+    descriptionInput.setAttribute('maxlength', '40');
+
+    appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
+
+// Init Div that will contain 'priority' and 'dueDate' of todo
+    const priorityAndDueDateDiv = document.createElement('div');
+    priorityAndDueDateDiv.id = 'priorityAndDueDateDiv';
+    form.appendChild(priorityAndDueDateDiv);
+
+// Ask user for 'priority' of Todo
+    const priorityField = document.createElement('p');
+    priorityField.id = 'priorityField';
+    priorityAndDueDateDiv.appendChild(priorityField);
+
+    const priorityLabel = document.createElement('label');
+    priorityLabel.innerText = 'Priority: '
+    priorityLabel.setAttribute('for', 'priorityInput');
+    priorityLabel.setAttribute('aria-label', 'required');
+
+    // Give options to choose from:
+    const select = document.createElement('select');
+    select.id = 'priorityList';
+
+    const lowPriority = document.createElement('option');
+    lowPriority.innerText = 'Low';
+    lowPriority.setAttribute('value', 'low');
+    const mediumPriority = document.createElement('option');
+    mediumPriority.innerText = 'Medium';
+    mediumPriority.setAttribute('value', 'medium');
+    const highPriority = document.createElement('option');
+    highPriority.innerText = 'High';
+    highPriority.setAttribute('value', 'high');
+
+    // Append 'option's to datalist
+    appendMultipleNodesToParent(select, lowPriority, mediumPriority, highPriority)
+
+    // Append to priorityField
+    appendMultipleNodesToParent(priorityField, priorityLabel, select);
+
+// Ask user for dueDate
+    const dueDateField = document.createElement('p');
+    dueDateField.id = 'dueDateField';
+    priorityAndDueDateDiv.appendChild(dueDateField);
+
+    const dueDateLabel = document.createElement('label');
+    dueDateLabel.innerText = 'Due Date: ';
+    dueDateLabel.setAttribute('for', 'dueDateInput');
+    dueDateLabel.setAttribute('aria-label', 'required');
+
+    const dueDateInput = document.createElement('input');
+    dueDateInput.id = 'dueDateInput';
+    dueDateInput.setAttribute('type', 'datetime-local');   
+
+    appendMultipleNodesToParent(dueDateField, dueDateLabel, dueDateInput);
+}
 
 
 // PUBSUB - Functions to hide leftSidebar
