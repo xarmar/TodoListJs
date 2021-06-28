@@ -3,6 +3,7 @@ $dark-purple: #361999;
 $cyan-blue: #78FFF1;
 $pink-attack: #FF6495;
 $light-grey: #f7f7f7;
+$dark-grey: #4d4d4d;
 $white: white;
 $black: black;
 
@@ -122,8 +123,8 @@ body {
             }
         }
     }
-    #displayProjectsDiv {
-        margin: 20px 0px 0px 20px;
+    #projectDiv {
+        margin: 20px 15px 0px 20px;
         @include flexRow();
         p {
             line-height: 0px;
@@ -132,8 +133,27 @@ body {
         #expandProjectsArrow {
             margin-right: 5%;
         }
-        &:hover {
-            @include leftGridHoverEffect();
+    }
+    #listOfProjectsDiv {
+        .project {
+            margin: 15px 20px 15px 20px;
+            padding-left: 0px;
+            list-style-type: none;
+            font-size:1.2em;
+            &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+            }
+        }
+        #addProject {
+            @extend .project;
+            color: $dark-purple;
+            &:hover {
+                font-weight: 500;
+                text-decoration: none;
+                color: red;
+
+            }
         }
     }
 }
