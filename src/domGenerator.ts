@@ -147,6 +147,7 @@ const addTodoPopUp = () => {
     titleInput.id = 'titleInput'
     titleInput.setAttribute('type', 'text');
     titleInput.required = true;
+    titleInput.autofocus = true;
 
     appendMultipleNodesToParent(titleField, titleLabel, titleInput);
 
@@ -156,12 +157,18 @@ const addTodoPopUp = () => {
     titleAndDescriptionDiv.appendChild(descriptionField);
 
     const descriptionLabel = document.createElement('label');
-    descriptionLabel.innerText = 'Description (optional) : ';
+    descriptionLabel.innerText = 'Description : ';
     descriptionLabel.setAttribute('for', 'descriptionInput');
 
-    const descriptionInput = document.createElement('input');
+    const descriptionInput = document.createElement('textarea');
     descriptionInput.id = 'descriptionInput';
-    descriptionInput.setAttribute('maxlength', '40');
+    descriptionInput.setAttribute('form', 'form');
+    descriptionInput.setAttribute('maxlength', '75');
+    descriptionInput.setAttribute('rows', '3');
+    descriptionInput.setAttribute('placeholder', 'Description is optional...');
+
+
+
 
     appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
 
@@ -173,33 +180,61 @@ const addTodoPopUp = () => {
 // Ask user for 'priority' of Todo
     const priorityField = document.createElement('p');
     priorityField.id = 'priorityField';
+    priorityField.innerText = 'Priority:';
     priorityAndDueDateDiv.appendChild(priorityField);
 
-    const priorityLabel = document.createElement('label');
-    priorityLabel.innerText = 'Priority: '
-    priorityLabel.setAttribute('for', 'priorityInput');
-    priorityLabel.setAttribute('aria-label', 'required');
-
     // Give options to choose from:
-    const select = document.createElement('select');
-    select.id = 'priorityList';
-    select.required = true;
+    const lowPriorityLabel = document.createElement('label');
+    lowPriorityLabel.setAttribute('for', 'lowPriority');
 
-    const lowPriority = document.createElement('option');
-    lowPriority.innerText = 'Low';
+    const lowPriority = document.createElement('input');
+    lowPriority.setAttribute('type', 'radio');
+    lowPriority.setAttribute('name', 'priorityLevel');
     lowPriority.setAttribute('value', 'low');
-    const mediumPriority = document.createElement('option');
-    mediumPriority.innerText = 'Medium';
+    lowPriority.id = 'lowPriority';
+    lowPriority.required = true;
+
+    const lowPriorityImage = document.createElement('img');
+    lowPriorityImage.id = 'lowPriorityImage';
+
+    appendMultipleNodesToParent(lowPriorityLabel, lowPriority, lowPriorityImage);
+
+    const mediumPriorityLabel = document.createElement('label');
+    mediumPriorityLabel.setAttribute('for', 'mediumPriority');
+
+    const mediumPriority = document.createElement('input');
+    mediumPriority.setAttribute('type', 'radio');
+    mediumPriority.setAttribute('name', 'priorityLevel');
     mediumPriority.setAttribute('value', 'medium');
-    const highPriority = document.createElement('option');
-    highPriority.innerText = 'High';
+    mediumPriority.id = 'mediumPriority';
+
+    const mediumPriorityImage = document.createElement('img');
+    mediumPriorityImage.id = 'mediumPriorityImage';
+
+    appendMultipleNodesToParent(mediumPriorityLabel, mediumPriority, mediumPriorityImage);
+
+    const highPriorityLabel = document.createElement('label');
+    highPriorityLabel.setAttribute('for', 'highPriority');
+
+    const highPriority = document.createElement('input');
+    highPriority.setAttribute('type', 'radio');
+    highPriority.setAttribute('name', 'priorityLevel');
     highPriority.setAttribute('value', 'high');
+    highPriority.id = 'highPriority';
 
-    // Append 'option's to datalist
-    appendMultipleNodesToParent(select, lowPriority, mediumPriority, highPriority)
+    const highPriorityImage = document.createElement('img');
+    highPriorityImage.id = 'highPriorityImage';
+    
+    appendMultipleNodesToParent(highPriorityLabel, highPriority, highPriorityImage);
 
-    // Append to priorityField
-    appendMultipleNodesToParent(priorityField, priorityLabel, select);
+    // Append everything to a 'priorityDiv'
+    const priorityDiv = document.createElement('div');
+    priorityDiv.id = 'priorityDiv';
+    appendMultipleNodesToParent(priorityDiv, lowPriorityLabel, mediumPriorityLabel, highPriorityLabel);
+    
+    // Append priorityDiv to priorityField
+    priorityField.appendChild(priorityDiv);
+
 
 // Ask user for dueDate
     const dueDateField = document.createElement('p');
