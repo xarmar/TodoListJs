@@ -1,10 +1,22 @@
 // projectModule
+type Priority = 'low' | 'medium' | 'high';
+
+type Todo = {
+    parentProject: string;
+    priority: Priority;
+    title: string;
+    description: string;
+    dueDate: Date;
+    notes: string[];
+    completed: boolean;
+}
+
 export const projectModule = (() => {
 
     class Project {
         title: string;
         description: string;
-        children: object[];
+        children: Todo[];
         
         constructor(title: string, description?: string) {
             this.title = title;
@@ -20,17 +32,20 @@ export const projectModule = (() => {
             this.description = newDescription;
         }
     }
-    
+
+    const listofProjects: Project[] = []
+
     const newProject = (title: string, description?: string) => {
         let newObject = new Project(title, description);
         return newObject;
     }
     
-    const addTodoToProject = (todo: object, project: Project) => {
+    const addTodoToProject = (todo: Todo, project: Project) => {
         project.children.push(todo);
     }
-    
+
     return {
+        listofProjects: listofProjects,
         newProject: newProject,
         addTodoToProject : addTodoToProject
     }
