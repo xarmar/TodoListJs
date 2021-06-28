@@ -1,4 +1,5 @@
 import { appendMultipleNodesToParent } from "./helperFunctions";
+import { projectModule } from "./project";
 import PubSub from 'pubsub-js';
 import { add } from "date-fns";
 
@@ -90,9 +91,9 @@ const populateLeftGrid = () => {
     appendMultipleNodesToParent(optionsList, today, tomorrow, week);
 
     // Init displayProjectsDiv
-    const displayProjectsDiv = document.createElement('div');
-    displayProjectsDiv.id = 'displayProjectsDiv';
-    stickyLeftDiv.appendChild(displayProjectsDiv);
+    const projectDiv = document.createElement('div');
+    projectDiv.id = 'projectDiv';
+    stickyLeftDiv.appendChild(projectDiv);
 
     // add projects options
     const projects = document.createElement('p');
@@ -101,7 +102,34 @@ const populateLeftGrid = () => {
     const expandProjectsArrow = document.createElement('p');
     expandProjectsArrow.id = 'expandProjectsArrow';
     expandProjectsArrow.innerText = '\u{02C5}';
-    appendMultipleNodesToParent(displayProjectsDiv, projects, expandProjectsArrow);
+    appendMultipleNodesToParent(projectDiv, projects, expandProjectsArrow);
+
+    // display all Projects
+    const listOfProjectsDiv = document.createElement('div');
+    listOfProjectsDiv.id = 'listOfProjectsDiv';
+    stickyLeftDiv.appendChild(listOfProjectsDiv);
+
+    const projectUnorderedList = document.createElement('ul');
+    projectUnorderedList.id = 'projectUnorderedList'
+    listOfProjectsDiv.appendChild(projectUnorderedList);
+
+    const projectsArray = projectModule.listofProjects;
+
+    projectsArray.forEach(project => {
+        let ProjecttoBeListed = document.createElement('li');
+        ProjecttoBeListed.classList.add('project')
+        ProjecttoBeListed.innerText = project.title;
+        projectUnorderedList.appendChild(ProjecttoBeListed);
+    });
+
+    const addProject = document.createElement('li');
+    const span = document.createElement('span');
+    span.id = 'plus'
+    span.innerText = '+';
+    addProject.appendChild(span);
+    addProject.id = 'addProject';
+    addProject.innerText = 'New Project';
+    projectUnorderedList.appendChild(addProject);
 
 }
 
@@ -121,6 +149,7 @@ const addTodoPopUp = () => {
 // Create Form where user will be prompted for choices
     const form = document.createElement('form');
     form.id = 'todoForm';
+    form.onsubmit = captureForm;
     popUpDiv.appendChild(form);
 
 // Set Header at the top of the form
@@ -192,6 +221,7 @@ const addTodoPopUp = () => {
     lowPriority.setAttribute('name', 'priorityLevel');
     lowPriority.setAttribute('value', 'low');
     lowPriority.id = 'lowPriority';
+    lowPriority.classList.add('priorityOption');
     lowPriority.required = true;
 
     const lowPriorityImage = document.createElement('img');
@@ -207,6 +237,8 @@ const addTodoPopUp = () => {
     mediumPriority.setAttribute('name', 'priorityLevel');
     mediumPriority.setAttribute('value', 'medium');
     mediumPriority.id = 'mediumPriority';
+    lowPriority.classList.add('priorityOption');
+
 
     const mediumPriorityImage = document.createElement('img');
     mediumPriorityImage.id = 'mediumPriorityImage';
@@ -221,6 +253,7 @@ const addTodoPopUp = () => {
     highPriority.setAttribute('name', 'priorityLevel');
     highPriority.setAttribute('value', 'high');
     highPriority.id = 'highPriority';
+    lowPriority.classList.add('priorityOption');
 
     const highPriorityImage = document.createElement('img');
     highPriorityImage.id = 'highPriorityImage';
@@ -231,7 +264,7 @@ const addTodoPopUp = () => {
     const priorityDiv = document.createElement('div');
     priorityDiv.id = 'priorityDiv';
     appendMultipleNodesToParent(priorityDiv, lowPriorityLabel, mediumPriorityLabel, highPriorityLabel);
-    
+
     // Append priorityDiv to priorityField
     priorityField.appendChild(priorityDiv);
 
@@ -271,9 +304,27 @@ const addTodoPopUp = () => {
     appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
 }
 
-// PUBSUB - Functions to hide leftSidebar
+
+// 'Add' PopUp Button Clicked
+const captureForm = (event) => {
+    // prevent page from refreshing
+    event.preventDefault();
+
+    // get form data
+    let title = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
+    let description = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
+    let priority = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
+    let date = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
+
+    submitTodoFormInfo(title, priority, date, description);
+
+    closePopUp();
+}
+
+// PUBSUB ----------------------- PUBSUB ----------------------------- PUBSUB
 const expandButton = 'expandButton';
 const popUpClose = 'popUpClose';
+const newTodoFormSubmission = 'newTodoFormSubmition';
 
 // Expand Menu Clicked
 const PubSubExpanderClicked = () => {
@@ -293,15 +344,23 @@ const expandButtonListener = PubSub.subscribe(expandButton, function(expandButto
     });
 });
 
-// Close PopUp Task Button Clicked
+// 'Close' PopUp Button Clicked
 const closePopUp = () => {
     let popUpDiv = document.querySelector('#popUpDiv');
     PubSub.publish(popUpClose, popUpDiv);
 }
 
-const closePopUpListener = PubSub.subscribe(popUpClose, function(expandButton, popUpClose) {
-    popUpClose.remove();
+const closePopUpListener = PubSub.subscribe(popUpClose, function(expandButton, popUpDiv) {
+    popUpDiv.remove();
     showingPopUp = false;
+});
+
+const submitTodoFormInfo = (title, priority, date, description) => {
+    PubSub.publish(newTodoFormSubmission, {title, priority, date, description})
+}
+
+const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, priority, date, description}) {
+    
 });
 
 return {
