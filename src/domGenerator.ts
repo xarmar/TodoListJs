@@ -122,14 +122,10 @@ const populateLeftGrid = () => {
         projectUnorderedList.appendChild(ProjecttoBeListed);
     });
 
-    const addProject = document.createElement('li');
-    const span = document.createElement('span');
-    span.id = 'plus'
-    span.innerText = '+';
-    addProject.appendChild(span);
+    const addProject = document.createElement('p');
     addProject.id = 'addProject';
-    addProject.innerText = 'New Project';
-    projectUnorderedList.appendChild(addProject);
+    addProject.innerHTML = "<span id = 'plus'>+</span> New Project"
+    listOfProjectsDiv.appendChild(addProject);
 
 }
 
@@ -305,7 +301,7 @@ const addTodoPopUp = () => {
 }
 
 
-// 'Add' PopUp Button Clicked
+// 'Add' PopUp Button in Form Clicked
 const captureForm = (event) => {
     // prevent page from refreshing
     event.preventDefault();
