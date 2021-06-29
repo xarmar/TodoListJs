@@ -133,26 +133,37 @@ body {
         #expandProjectsArrow {
             margin-right: 5%;
         }
+        &:hover {
+            @include leftGridHoverEffect();
+        }
     }
     #listOfProjectsDiv {
-        .project {
-            margin: 15px 20px 15px 20px;
-            padding-left: 0px;
-            list-style-type: none;
-            font-size:1.2em;
-            &:hover {
-                cursor: pointer;
-                text-decoration: underline;
+        #projectUnorderedList {
+            padding-inline-start: 10px;
+            .project {
+                margin: 15px 20px 15px 20px;
+                padding-left: 0px;
+                list-style-type: none;
+                font-size:1.2em;
+                &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
             }
         }
         #addProject {
             @extend .project;
-            color: $dark-purple;
+            margin-left: 25px;
+            max-width: fit-content;
+            color: $white;
+            background-color: $dark-purple;
+            padding: 5px 6px 5px 6px;
+            border-radius: 10px;
+            border: transparent solid 4px;
             &:hover {
-                font-weight: 500;
+                cursor: pointer;
                 text-decoration: none;
-                color: red;
-
+                border: $pink-attack solid 4px
             }
         }
     }
