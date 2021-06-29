@@ -1,7 +1,9 @@
-import { appendMultipleNodesToParent } from "./helperFunctions";
+import { appendMultipleNodesToParent, isBlank, removeChildNodes } from "./helperFunctions";
 import { projectModule } from "./project";
 import PubSub from 'pubsub-js';
 import { add } from "date-fns";
+import { todoModule } from "./todo";
+import { node } from "webpack";
 
 export const dom = (() => {
 
@@ -124,14 +126,7 @@ const populateLeftGrid = () => {
     projectUnorderedList.id = 'projectUnorderedList'
     listOfProjectsDiv.appendChild(projectUnorderedList);
 
-    const projectsArray = projectModule.listofProjects;
-
-    projectsArray.forEach(project => {
-        let ProjecttoBeListed = document.createElement('li');
-        ProjecttoBeListed.classList.add('project')
-        ProjecttoBeListed.innerText = project.title;
-        projectUnorderedList.appendChild(ProjecttoBeListed);
-    });
+    populateProjectsList();
 
     const addProject = document.createElement('p');
     addProject.id = 'addProject';
@@ -161,7 +156,7 @@ const addTodoPopUp = () => {
 // Create Form where user will be prompted for choices
     const form = document.createElement('form');
     form.id = 'todoForm';
-    form.onsubmit = captureTodoForm;
+    form.onsubmit = captureForm;
     popUpDiv.appendChild(form);
 
 // Set Header at the top of the form
@@ -207,8 +202,6 @@ const addTodoPopUp = () => {
     descriptionInput.setAttribute('maxlength', '75');
     descriptionInput.setAttribute('rows', '3');
     descriptionInput.setAttribute('placeholder', 'Description is optional...');
-
-
 
 
     appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
@@ -320,6 +313,7 @@ const addTodoPopUp = () => {
     chooseProjectInput.setAttribute('type', 'text');
     chooseProjectInput.setAttribute('list', 'projectOptions');
     chooseProjectInput.required = true;
+    chooseProjectInput.addEventListener("click", clearChosenOption);
 
     appendMultipleNodesToParent (chooseProjectField, chooseProjectLabel, chooseProjectInput);
 
@@ -358,17 +352,28 @@ const addTodoPopUp = () => {
 }
 
         // Todo Form is Submited - Capture User Input
-const captureTodoForm = (event) => {
+const captureForm = (event) => {
     // prevent page from refreshing
     event.preventDefault();
+
+    let idOfForm = event.target.id;
 
     // get form data
     let title = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
     let description = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
-    let priority = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
-    let date = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
 
-    submitTodoFormInfo(title, priority, date, description);
+    // Prevents 'title' being blank
+    if (isBlank(title)) {
+        return
+    }
+
+    if (idOfForm === 'todoForm') {
+        var priority = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
+        var date = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
+    }
+
+
+    submitFormInfo(title, description, priority, date);
 
     closePopUp();
 }
@@ -389,7 +394,7 @@ const addProjectPopUp = () => {
 // Create Form where user will be prompted for choices
     const form = document.createElement('form');
     form.id = 'projectForm';
-    form.onsubmit = captureTodoForm;
+    form.onsubmit = captureForm;
     popUpDiv.appendChild(form);
 
 // Set Header at the top of the form
@@ -415,7 +420,7 @@ const addProjectPopUp = () => {
     const titleInput = document.createElement('input');
     titleInput.id = 'titleInput'
     titleInput.setAttribute('type', 'text');
-    titleInput.setAttribute('maxlength', '20');
+    titleInput.setAttribute('maxlength', '14');
     titleInput.required = true;
     titleInput.autofocus = true;
 
@@ -445,6 +450,7 @@ const addProjectPopUp = () => {
     form.appendChild(buttonsDiv);
 
     const addButton = document.createElement('button');
+    addButton.addEventListener('click', captureForm);
     addButton.id = 'addButton';
     addButton.innerText = 'Add';
 
@@ -456,20 +462,28 @@ const addProjectPopUp = () => {
     appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
 }
 
-        // Project Form is Submited - Capture User Input
-const captureProjectForm = (event) => {
-    // prevent page from refreshing
-    event.preventDefault();
+const clearChosenOption = (event) => {
+    event.target.value = null;
+}
 
-    // get form data
-    let title = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
-    let description = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
-    let priority = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
-    let date = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
+const populateProjectsList = () => {
+    let projectUnorderedList = document.querySelector('#projectUnorderedList');
+    
+    const projectsArray = projectModule.listofProjects;
 
-    submitTodoFormInfo(title, priority, date, description);
+    projectsArray.forEach(project => {
+        let ProjecttoBeListed = document.createElement('li');
+        ProjecttoBeListed.classList.add('project')
+        ProjecttoBeListed.innerText = project.title;
+        projectUnorderedList.appendChild(ProjecttoBeListed);
+    });
+}
 
-    closePopUp();
+const updateProjectsInDom = () => {
+    let nodeToRemove = document.querySelector('#projectUnorderedList');
+    removeChildNodes(nodeToRemove);
+
+    populateProjectsList();
 }
 
 // Closes PopUps whenever the Cancel Button is clicked or when a Form is sucessfully submitted
@@ -479,20 +493,30 @@ const closePopUp = () => {
     showingPopUp = false;
 }
 
-
 // PUBSUB ----------------------- PUBSUB ----------------------------- PUBSUB
-const popUpClose = 'popUpClose';
 const newTodoFormSubmission = 'newTodoFormSubmition';
+const newProjectFormSubmission = 'newProjectFormSubmission';
 
-
-const submitTodoFormInfo = (title, priority, date, description) => {
-    PubSub.publish(newTodoFormSubmission, {title, priority, date, description})
+const submitFormInfo = (title, description, priority?, date?) => {
+    // if priority and date are NOT null, then it's a todoForm
+    if(priority != null && date != null) {
+        PubSub.publish(newTodoFormSubmission, {title, description, priority, date});
+    }
+    // else its a projectForm
+    else {
+        PubSub.publish(newProjectFormSubmission, {title, description})
+    }
 }
 
-const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, priority, date, description}) {
-    
+const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, date}) {
+    console.log('new todo code will run here');
 });
 
+const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title, description}) {
+    let newProject = projectModule.newProject(title, description);
+    projectModule.listofProjects.push(newProject);
+    updateProjectsInDom();
+});
 
 return {
     generateNavBar: generateNavBar,
