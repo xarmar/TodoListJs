@@ -1,4 +1,4 @@
-import { appendMultipleNodesToParent, isBlank, removeChildNodes } from "./helperFunctions";
+import { appendMultipleNodesToParent, currentDate, isBlank, removeChildNodes } from "./helperFunctions";
 import { projectModule } from "./project";
 import PubSub from 'pubsub-js';
 import { add } from "date-fns";
@@ -275,6 +275,7 @@ const addTodoPopUp = () => {
 
 
 // Ask user for dueDate
+
     const dueDateField = document.createElement('p');
     dueDateField.id = 'dueDateField';
     priorityAndDueDateDiv.appendChild(dueDateField);
@@ -285,9 +286,14 @@ const addTodoPopUp = () => {
     dueDateLabel.setAttribute('for', 'dueDateInput');
     dueDateLabel.setAttribute('aria-label', 'required');
 
+    // get todays date
+    const today = currentDate();
+    console.log(today);
     const dueDateInput = document.createElement('input');
     dueDateInput.id = 'dueDateInput';
-    dueDateInput.setAttribute('type', 'date');   
+    dueDateInput.setAttribute('type', 'date'); 
+    // TODO - MUST FIX MIN ATTRIBUE NOT WORKING  
+    dueDateInput.setAttribute('min', today);   
     dueDateInput.required = true;
 
     appendMultipleNodesToParent(dueDateField, dueDateLabel, dueDateInput);
@@ -359,8 +365,8 @@ const captureForm = (event) => {
     let idOfForm = event.target.id;
 
     // get form data
-    let title = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
-    let description = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
+    let title:string = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
+    let description:string = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
 
     // Prevents 'title' being blank
     if (isBlank(title)) {
@@ -368,12 +374,14 @@ const captureForm = (event) => {
     }
 
     if (idOfForm === 'todoForm') {
-        var priority = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
-        var date = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
+        var priority:string = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
+        let date: string = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
+        var dueDate: Date = new Date(date);
+        var project:string = (<HTMLInputElement>document.querySelector('input#chooseProjectInput')).value;
     }
 
-
-    submitFormInfo(title, description, priority, date);
+    console.log(dueDate);
+    submitFormInfo(title, description, priority, dueDate, project);
 
     closePopUp();
 }
@@ -497,10 +505,10 @@ const closePopUp = () => {
 const newTodoFormSubmission = 'newTodoFormSubmition';
 const newProjectFormSubmission = 'newProjectFormSubmission';
 
-const submitFormInfo = (title, description, priority?, date?) => {
+const submitFormInfo = (title: string, description: string, priority?: string, dueDate?: Date, project?: string) => {
     // if priority and date are NOT null, then it's a todoForm
-    if(priority != null && date != null) {
-        PubSub.publish(newTodoFormSubmission, {title, description, priority, date});
+    if(priority != null && dueDate != null) {
+        PubSub.publish(newTodoFormSubmission, {title, description, priority, dueDate});
     }
     // else its a projectForm
     else {
@@ -508,8 +516,10 @@ const submitFormInfo = (title, description, priority?, date?) => {
     }
 }
 
-const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, date}) {
-    console.log('new todo code will run here');
+const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, dueDate, project}) {
+    let newTodo = todoModule.newTodo(title, priority, dueDate, description);
+    console.log(newTodo);
+    console.log(project);
 });
 
 const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title, description}) {
