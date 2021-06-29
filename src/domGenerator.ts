@@ -5,6 +5,7 @@ import { add } from "date-fns";
 
 export const dom = (() => {
 
+// Generates NavBar
 const generateNavBar = () => {
 
 // Create Header
@@ -29,7 +30,7 @@ appendMultipleNodesToParent(navBar, leftHeaderDiv, rightHeaderDiv);
 const expander = document.createElement('p');
 expander.innerText = '☰';
 expander.classList.add('navOption');
-expander.addEventListener('click', PubSubExpanderClicked)
+expander.addEventListener('click', toggleLeftStickyNavBar)
 
 leftHeaderDiv.appendChild(expander);
 
@@ -47,6 +48,15 @@ appendMultipleNodesToParent(rightHeaderDiv, addTodo, history);
 
 }
 
+// Runs when 'Expand' Menu in NavBar is Clicked
+const toggleLeftStickyNavBar = () => {
+    let grid = document.querySelector('#gridDiv');
+    grid.classList.toggle('expandGrid');
+    let stickyLeftDiv = document.querySelector('#stickyLeftDiv');
+    stickyLeftDiv.classList.toggle('displayNone');
+}
+
+// Generates Grid
 const generateGrid = () => {
 
     // create Div for grid
@@ -67,6 +77,7 @@ const generateGrid = () => {
 
 }
 
+// Populates Left-Grid 
 const populateLeftGrid = () => {
     let stickyLeftDiv = document.querySelector('#stickyLeftDiv');
 
@@ -125,11 +136,16 @@ const populateLeftGrid = () => {
     const addProject = document.createElement('p');
     addProject.id = 'addProject';
     addProject.innerHTML = "<span id = 'plus'>+</span> New Project"
+    addProject.addEventListener('click', addProjectPopUp);
     listOfProjectsDiv.appendChild(addProject);
 
 }
 
+// FORMS
 let showingPopUp = false;
+
+    // -------------------------TODO FORM --------------------------------------
+        // Runs if '+' button in NavBar Clicked
 const addTodoPopUp = () => {
     if (showingPopUp) {
         return
@@ -145,7 +161,7 @@ const addTodoPopUp = () => {
 // Create Form where user will be prompted for choices
     const form = document.createElement('form');
     form.id = 'todoForm';
-    form.onsubmit = captureForm;
+    form.onsubmit = captureTodoForm;
     popUpDiv.appendChild(form);
 
 // Set Header at the top of the form
@@ -283,6 +299,47 @@ const addTodoPopUp = () => {
 
     appendMultipleNodesToParent(dueDateField, dueDateLabel, dueDateInput);
 
+    // Ask user what Project to append the Todo to
+
+    const chooseProjectDiv = document.createElement('div');
+    chooseProjectDiv.id = 'chooseProjectDiv';
+    form.appendChild(chooseProjectDiv);
+
+    const chooseProjectField = document.createElement('p');
+    chooseProjectField.id = 'chooseProjectField';
+    chooseProjectDiv.appendChild(chooseProjectField);
+
+    const chooseProjectLabel = document.createElement('label');
+    chooseProjectLabel.innerText = 'Project: ';
+    chooseProjectLabel.id = 'chooseProjectLabel';
+    chooseProjectLabel.setAttribute('for', 'chooseProjectInput');
+    chooseProjectLabel.setAttribute('aria-label', 'required');
+
+    const chooseProjectInput = document.createElement('input');
+    chooseProjectInput.id = 'chooseProjectInput';
+    chooseProjectInput.setAttribute('type', 'text');
+    chooseProjectInput.setAttribute('list', 'projectOptions');
+    chooseProjectInput.required = true;
+
+    appendMultipleNodesToParent (chooseProjectField, chooseProjectLabel, chooseProjectInput);
+
+    // Give user options to append Todo to 
+    const projectOptions = document.createElement('datalist');
+    projectOptions.id = 'projectOptions';
+    chooseProjectField.appendChild(projectOptions);
+
+    let projectList = projectModule.listofProjects;
+
+    projectList.forEach(project => {
+        let title = project.title;
+
+        let projectOption = document.createElement('option');
+        projectOption.innerText = title
+        projectOption.classList.add('projectOption');
+
+        projectOptions.appendChild(projectOption);
+    });
+
     // Add Buttons
     const buttonsDiv = document.createElement('div');
     buttonsDiv.id = 'buttonsDiv';
@@ -300,9 +357,107 @@ const addTodoPopUp = () => {
     appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
 }
 
+        // Todo Form is Submited - Capture User Input
+const captureTodoForm = (event) => {
+    // prevent page from refreshing
+    event.preventDefault();
 
-// 'Add' PopUp Button in Form Clicked
-const captureForm = (event) => {
+    // get form data
+    let title = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
+    let description = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
+    let priority = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
+    let date = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
+
+    submitTodoFormInfo(title, priority, date, description);
+
+    closePopUp();
+}
+    // ------------------------ PROJECT FORM -----------------------------------
+        // Runs if 'newProject' button in leftStickyNavBar Clicked
+const addProjectPopUp = () => {
+    if (showingPopUp) {
+        return
+    }
+
+    showingPopUp = true;
+    let gridDiv = document.querySelector('#gridDiv');
+
+// Create PopUpDiv that will append to gridDiv
+    const popUpDiv = document.createElement('div');
+    popUpDiv.id = 'popUpDiv';
+    gridDiv.appendChild(popUpDiv);
+// Create Form where user will be prompted for choices
+    const form = document.createElement('form');
+    form.id = 'projectForm';
+    form.onsubmit = captureTodoForm;
+    popUpDiv.appendChild(form);
+
+// Set Header at the top of the form
+    const popUpHeader = document.createElement('p');
+    popUpHeader.id = 'popUpHeader';
+    popUpHeader.innerText = 'Add New Project'
+    form.appendChild(popUpHeader);
+
+// Init Div that will contain 'title' and 'description' of Project
+    const titleAndDescriptionDiv = document.createElement('div');
+    titleAndDescriptionDiv.id = 'titleAndDescriptionDiv';
+    form.appendChild(titleAndDescriptionDiv);
+
+// Ask user for 'title' of Project
+    const titleField = document.createElement('p');
+    titleField.id = 'titleField';
+    titleAndDescriptionDiv.appendChild(titleField);
+    
+    const titleLabel = document.createElement('label');
+    titleLabel.innerText = 'Title: ';
+    titleLabel.setAttribute('for', 'titleInput');
+
+    const titleInput = document.createElement('input');
+    titleInput.id = 'titleInput'
+    titleInput.setAttribute('type', 'text');
+    titleInput.setAttribute('maxlength', '20');
+    titleInput.required = true;
+    titleInput.autofocus = true;
+
+    appendMultipleNodesToParent(titleField, titleLabel, titleInput);
+
+    // Ask user for 'description' of Project
+    const descriptionField = document.createElement('p');
+    descriptionField.id = 'descriptionField';
+    titleAndDescriptionDiv.appendChild(descriptionField);
+
+    const descriptionLabel = document.createElement('label');
+    descriptionLabel.innerText = 'Description : ';
+    descriptionLabel.setAttribute('for', 'descriptionInput');
+
+    const descriptionInput = document.createElement('textarea');
+    descriptionInput.id = 'descriptionInput';
+    descriptionInput.setAttribute('form', 'form');
+    descriptionInput.setAttribute('maxlength', '75');
+    descriptionInput.setAttribute('rows', '3');
+    descriptionInput.setAttribute('placeholder', 'Description is optional...');
+
+    appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
+
+    // Add Buttons
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.id = 'buttonsDiv';
+    form.appendChild(buttonsDiv);
+
+    const addButton = document.createElement('button');
+    addButton.id = 'addButton';
+    addButton.innerText = 'Add';
+
+    const cancelButton = document.createElement('button');
+    cancelButton.addEventListener('click', closePopUp);
+    cancelButton.id = 'cancelButton';
+    cancelButton.innerText = 'Cancel';
+
+    appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
+}
+
+        // Project Form is Submited - Capture User Input
+const captureProjectForm = (event) => {
     // prevent page from refreshing
     event.preventDefault();
 
@@ -317,39 +472,18 @@ const captureForm = (event) => {
     closePopUp();
 }
 
+// Closes PopUps whenever the Cancel Button is clicked or when a Form is sucessfully submitted
+const closePopUp = () => {
+    let popUpDiv = document.querySelector('#popUpDiv');
+    popUpDiv.remove();
+    showingPopUp = false;
+}
+
+
 // PUBSUB ----------------------- PUBSUB ----------------------------- PUBSUB
-const expandButton = 'expandButton';
 const popUpClose = 'popUpClose';
 const newTodoFormSubmission = 'newTodoFormSubmition';
 
-// Expand Menu Clicked
-const PubSubExpanderClicked = () => {
-    let grid: Node = document.querySelector('#gridDiv');
-    let stickyLeftDiv: Node = document.querySelector('#stickyLeftDiv');
-    PubSub.publish(expandButton, [grid, stickyLeftDiv]);
-}
-
-const expandButtonListener = PubSub.subscribe(expandButton, function(expandButton, divsArray) {
-    divsArray.forEach(div => {
-        if (div.id === 'gridDiv') {
-            div.classList.toggle('expandGrid')
-        }
-        else {
-            div.classList.toggle('displayNone')
-        }
-    });
-});
-
-// 'Close' PopUp Button Clicked
-const closePopUp = () => {
-    let popUpDiv = document.querySelector('#popUpDiv');
-    PubSub.publish(popUpClose, popUpDiv);
-}
-
-const closePopUpListener = PubSub.subscribe(popUpClose, function(expandButton, popUpDiv) {
-    popUpDiv.remove();
-    showingPopUp = false;
-});
 
 const submitTodoFormInfo = (title, priority, date, description) => {
     PubSub.publish(newTodoFormSubmission, {title, priority, date, description})
@@ -358,6 +492,7 @@ const submitTodoFormInfo = (title, priority, date, description) => {
 const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, priority, date, description}) {
     
 });
+
 
 return {
     generateNavBar: generateNavBar,
