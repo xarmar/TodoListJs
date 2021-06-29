@@ -182,7 +182,7 @@ body {
     border: 2px $dark-purple solid;
     background-color: $light-grey;
     height: fit-content;
-    #todoForm {
+    #todoForm, #projectForm {
         display: grid;
         width: fit-content;
         margin-bottom: 10px;
@@ -190,6 +190,7 @@ body {
     'popUpHeader'
     'titleAndDescriptionDiv' 
     'priorityAndDueDateDiv'
+    'chooseProjectDiv'
     'buttonsDiv';
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 2fr;
@@ -204,7 +205,7 @@ body {
         }
         #titleAndDescriptionDiv {
             grid-area: titleAndDescriptionDiv;
-            margin: 5px 10px 5px 10px;
+            margin: 5px;
             #titleField, #descriptionField {
                 @include flexColumn();
             }
@@ -215,11 +216,11 @@ body {
         }
         #priorityAndDueDateDiv {
             grid-area: priorityAndDueDateDiv;
-            margin: 5px 10px 5px 10px;
+            margin: 5px;
             #priorityField {
                 @include flexColumn();
-                margin-top: 10px;
-                margin-bottom: 25px;
+                margin-top: 5px;
+                margin-bottom: 20px;
                 #priorityDiv {
                     @include flexRow();
                     margin-top: 10px;
@@ -243,9 +244,23 @@ body {
             #dueDateField {
                 @include flexColumn();
                 margin-top: 25px;
-                margin-bottom: 25px;
+                margin-bottom: 5px;
             }
             #dueDateInput {
+                border-radius: 8px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+        #chooseProjectDiv {
+            grid-area: chooseProjectDiv;
+            margin: 5px;
+            #chooseProjectField {
+                @include flexColumn();
+                margin-top: 10px;
+                margin-bottom: 25px;
+            }
+            #chooseProjectInput {
                 border-radius: 8px;
                 margin-left: auto;
                 margin-right: auto;
