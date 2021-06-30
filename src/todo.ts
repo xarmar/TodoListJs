@@ -1,7 +1,6 @@
+import { Priority, Todo, Project } from "./types";
 // todoModule
 export const todoModule = (() => {
-
-    type Priority = 'low' | 'medium' | 'high';
     
     class Todo {
         parentProject: string;
