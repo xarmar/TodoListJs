@@ -33,7 +33,7 @@ export const projectModule = (() => {
         }
     }
 
-    const listofProjects: Project[] = []
+    const listOfProjects: Project[] = []
 
     const newProject = (title: string, description?: string) => {
         let newObject = new Project(title, description);
@@ -44,10 +44,21 @@ export const projectModule = (() => {
         project.children.push(todo);
     }
 
+    const appendTodoToProject = (todo: Todo, projectTitle: string) => {
+        listOfProjects.forEach(project => {
+            if(project.title === projectTitle) {
+                project.children.push(todo);
+                console.log(project);
+            }
+        });
+
+    }
+
     return {
-        listofProjects: listofProjects,
+        listofProjects: listOfProjects,
         newProject: newProject,
-        addTodoToProject : addTodoToProject
+        addTodoToProject : addTodoToProject,
+        appendTodoToProject: appendTodoToProject
     }
     
     })();
