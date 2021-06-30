@@ -156,6 +156,25 @@ const populateRightGrid = (event) => {
     projectHeader.id = 'projectHeader';
     projectAndTodosDiv.appendChild(projectHeader);
 
+    // Label The Todo's that will be appended
+    let labelTodoListDiv = document.createElement('div');
+    labelTodoListDiv.id = 'labelTodoListDiv';
+    projectAndTodosDiv.appendChild(labelTodoListDiv);
+
+    let statusLabel = document.createElement('p');
+    statusLabel.innerText = 'Status';
+
+    let titleLabel = document.createElement('p');
+    titleLabel.innerText = 'Title';
+
+    let dateLabel = document.createElement('p');
+    dateLabel.innerText = 'Due Date';
+
+    let priorityLabel = document.createElement('p');
+    priorityLabel.innerText = 'Priority';
+
+    helperfunction.appendMultipleNodesToParent(labelTodoListDiv, statusLabel, titleLabel, dateLabel, priorityLabel);
+
     // Loop through Project's children Todo's
     let projectChildren = chosenProject.children
     projectChildren.forEach(todo => {
@@ -177,10 +196,18 @@ const populateRightGrid = (event) => {
         dueDateP.innerText = dueDateString
 
         let priority: string = todo.priority;
-        let priorityP = document.createElement('p');
-        priorityP.innerText = priority
+        let priorityImg = document.createElement('img');
+        if (priority === 'low') {
+            priorityImg.classList.add('lowPriority')
+        }
+        else if (priority === 'medium') {
+            priorityImg.classList.add('mediumPriority');
+        }
+        else if (priority === 'high') {
+            priorityImg.classList.add('highPriority');
+        }
 
-        helperfunction.appendMultipleNodesToParent(listTodosInRowsDiv, checkbox, titleP, dueDateP, priorityP);
+        helperfunction.appendMultipleNodesToParent(listTodosInRowsDiv, checkbox, titleP, dueDateP, priorityImg);
         projectAndTodosDiv.appendChild(listTodosInRowsDiv);
     });
 }
@@ -194,6 +221,8 @@ const addTodoPopUp = () => {
     if (showingPopUp) {
         return
     }
+
+    
 
     showingPopUp = true;
     let gridDiv = document.querySelector('#gridDiv');
@@ -398,7 +427,7 @@ const addTodoPopUp = () => {
     addButton.innerText = 'Add';
 
     const cancelButton = document.createElement('button');
-    cancelButton.addEventListener('click', closePopUp);
+    cancelButton.addEventListener('click', todoAddButtonClicked);
     cancelButton.id = 'cancelButton';
     cancelButton.innerText = 'Cancel';
 
@@ -437,6 +466,8 @@ const addProjectPopUp = () => {
     if (showingPopUp) {
         return
     }
+
+    toggleLeftStickyNavBar();
 
     showingPopUp = true;
     let gridDiv = document.querySelector('#gridDiv');
@@ -528,7 +559,7 @@ const populateProjectsList = () => {
     projectsArray.forEach(project => {
         let ProjectToBeListed = document.createElement('li');
         ProjectToBeListed.classList.add('project')
-        ProjectToBeListed.addEventListener('click', populateRightGrid);
+        ProjectToBeListed.addEventListener('click', sideBarProjectClicked);
         ProjectToBeListed.innerText = project.title;
         projectUnorderedList.appendChild(ProjectToBeListed);
     });
@@ -551,6 +582,28 @@ const closePopUp = () => {
 // PUBSUB ----------------------- PUBSUB ----------------------------- PUBSUB
 const newTodoFormSubmission = 'newTodoFormSubmition';
 const newProjectFormSubmission = 'newProjectFormSubmission';
+const sideBarProjectClick = 'sideBarProjectClick';
+const todoAddButtonClick = 'todoAddButtonClick';
+
+const sideBarProjectClicked = (event) => {
+    PubSub.publish(sideBarProjectClick, {event});
+}
+
+const sideBarProjectListener = PubSub.subscribe(sideBarProjectClick, function (sideBarProjectClick, event) {
+    populateRightGrid(event.event);
+    toggleLeftStickyNavBar();
+});
+
+const todoAddButtonClicked = (event) => {
+    PubSub.publish(todoAddButtonClick, {event})
+}
+
+const todoAddButtonListener = PubSub.subscribe(todoAddButtonClick, function (todoAddButtonClicked, event) {
+    captureForm(event.event);
+    closePopUp();
+
+});
+
 
 const submitFormInfo = (title: string, description: string, priority?: string, dueDate?: Date, projectTitle?: string) => {
     // if priority and date are NOT null, then it's a todoForm
@@ -561,7 +614,7 @@ const submitFormInfo = (title: string, description: string, priority?: string, d
     else {
         PubSub.publish(newProjectFormSubmission, {title, description})
     }
-}
+};
 
 const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, dueDate, projectTitle}) {
     let newTodo = todoModule.newTodo(title, priority, dueDate, description);
