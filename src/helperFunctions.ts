@@ -17,8 +17,25 @@ export const isBlank = ch => {
 export const currentDate = () => {
     let currentDate = new Date();
     let cYear = currentDate.getFullYear();
-    let cMonth = currentDate.getMonth() + 1;
-    let cDay = currentDate.getDate();
+    
+    let month = currentDate.getMonth() + 1;
+    let cMonth;
+    if (month < 10) {
+        cMonth = '0' + month;
+    }
+    else {
+        cMonth = month
+    }
+
+    let cDay;
+    let day = currentDate.getDate();
+    if (day < 10) {
+        cDay = '0' + day;
+    }
+    else {
+        cDay = day
+    }
+    
     let today:string = cYear + '-' + cMonth + '-' + cDay ;
     return today;
 }
