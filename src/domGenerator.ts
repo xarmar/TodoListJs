@@ -1,7 +1,7 @@
-import { appendMultipleNodesToParent, currentDate, isBlank, removeChildNodes } from "./helperFunctions";
+import { Priority, Todo, Project } from "./types";
+import { helperfunction } from "./helperFunctions";
 import { projectModule } from "./project";
 import PubSub from 'pubsub-js';
-import { add } from "date-fns";
 import { todoModule } from "./todo";
 import { node } from "webpack";
 
@@ -26,7 +26,7 @@ leftHeaderDiv.id = 'leftHeaderDiv';
 const rightHeaderDiv = document.createElement('div');
 rightHeaderDiv.id = 'rightHeaderDiv';
 
-appendMultipleNodesToParent(navBar, leftHeaderDiv, rightHeaderDiv);
+helperfunction.appendMultipleNodesToParent(navBar, leftHeaderDiv, rightHeaderDiv);
 
 // Init left-li
 const expander = document.createElement('p');
@@ -46,7 +46,7 @@ const history = document.createElement('p');
 history.innerText = '\u{1F56E}';
 history.classList.add('navOption');
 
-appendMultipleNodesToParent(rightHeaderDiv, addTodo, history);
+helperfunction.appendMultipleNodesToParent(rightHeaderDiv, addTodo, history);
 
 }
 
@@ -101,7 +101,7 @@ const populateLeftGrid = () => {
     const week = document.createElement('li');
     week.id = 'week';
     week.innerText = 'Week';
-    appendMultipleNodesToParent(optionsList, today, tomorrow, week);
+    helperfunction.appendMultipleNodesToParent(optionsList, today, tomorrow, week);
 
     // Init displayProjectsDiv
     const projectDiv = document.createElement('div');
@@ -115,7 +115,7 @@ const populateLeftGrid = () => {
     const expandProjectsArrow = document.createElement('p');
     expandProjectsArrow.id = 'expandProjectsArrow';
     expandProjectsArrow.innerText = '\u{02C5}';
-    appendMultipleNodesToParent(projectDiv, projects, expandProjectsArrow);
+    helperfunction.appendMultipleNodesToParent(projectDiv, projects, expandProjectsArrow);
 
     // display all Projects
     const listOfProjectsDiv = document.createElement('div');
@@ -133,7 +133,56 @@ const populateLeftGrid = () => {
     addProject.innerHTML = "<span id = 'plus'>+</span> New Project"
     addProject.addEventListener('click', addProjectPopUp);
     listOfProjectsDiv.appendChild(addProject);
+}
 
+const populateRightGrid = (event) => {
+    const stickyRightDiv = document.querySelector('#stickyRightDiv');
+
+    // Remove previous Nodes on stickyRightDiv
+    helperfunction.removeChildNodes(stickyRightDiv);
+
+    // Create Div where elements will be appended
+    const projectAndTodosDiv = document.createElement('div');
+    projectAndTodosDiv.id = 'projectAndTodosDiv';
+    stickyRightDiv.appendChild(projectAndTodosDiv);
+    
+    // Identify requested Project
+    const projectTitle = event.target.innerText;
+    let chosenProject: Project = projectModule.findProject(projectTitle);     
+
+    // Create Header with chosenProject.title
+    let projectHeader = document.createElement('p');
+    projectHeader.innerText = chosenProject.title;
+    projectHeader.id = 'projectHeader';
+    projectAndTodosDiv.appendChild(projectHeader);
+
+    // Loop through Project's children Todo's
+    let projectChildren = chosenProject.children
+    projectChildren.forEach(todo => {
+        let listTodosInRowsDiv = document.createElement('div');
+        listTodosInRowsDiv.classList.add('listTodosInRowsDiv');
+
+        let completed: boolean = todo.completed
+        let checkbox = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        
+
+        let title: string = todo.title;
+        let titleP = document.createElement('p');
+        titleP.innerText = title
+
+        let dueDate: Date = todo.dueDate;
+        let dueDateP = document.createElement('p');
+        let dueDateString = dueDate.toDateString();
+        dueDateP.innerText = dueDateString
+
+        let priority: string = todo.priority;
+        let priorityP = document.createElement('p');
+        priorityP.innerText = priority
+
+        helperfunction.appendMultipleNodesToParent(listTodosInRowsDiv, checkbox, titleP, dueDateP, priorityP);
+        projectAndTodosDiv.appendChild(listTodosInRowsDiv);
+    });
 }
 
 // FORMS
@@ -185,7 +234,7 @@ const addTodoPopUp = () => {
     titleInput.required = true;
     titleInput.autofocus = true;
 
-    appendMultipleNodesToParent(titleField, titleLabel, titleInput);
+    helperfunction.appendMultipleNodesToParent(titleField, titleLabel, titleInput);
 
 // Ask user for 'description' of Todo
     const descriptionField = document.createElement('p');
@@ -204,7 +253,7 @@ const addTodoPopUp = () => {
     descriptionInput.setAttribute('placeholder', 'Description is optional...');
 
 
-    appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
+    helperfunction.appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
 
 // Init Div that will contain 'priority' and 'dueDate' of todo
     const priorityAndDueDateDiv = document.createElement('div');
@@ -232,7 +281,7 @@ const addTodoPopUp = () => {
     const lowPriorityImage = document.createElement('img');
     lowPriorityImage.id = 'lowPriorityImage';
 
-    appendMultipleNodesToParent(lowPriorityLabel, lowPriority, lowPriorityImage);
+    helperfunction.appendMultipleNodesToParent(lowPriorityLabel, lowPriority, lowPriorityImage);
 
     const mediumPriorityLabel = document.createElement('label');
     mediumPriorityLabel.setAttribute('for', 'mediumPriority');
@@ -248,7 +297,7 @@ const addTodoPopUp = () => {
     const mediumPriorityImage = document.createElement('img');
     mediumPriorityImage.id = 'mediumPriorityImage';
 
-    appendMultipleNodesToParent(mediumPriorityLabel, mediumPriority, mediumPriorityImage);
+    helperfunction.appendMultipleNodesToParent(mediumPriorityLabel, mediumPriority, mediumPriorityImage);
 
     const highPriorityLabel = document.createElement('label');
     highPriorityLabel.setAttribute('for', 'highPriority');
@@ -263,12 +312,12 @@ const addTodoPopUp = () => {
     const highPriorityImage = document.createElement('img');
     highPriorityImage.id = 'highPriorityImage';
     
-    appendMultipleNodesToParent(highPriorityLabel, highPriority, highPriorityImage);
+    helperfunction.appendMultipleNodesToParent(highPriorityLabel, highPriority, highPriorityImage);
 
     // Append everything to a 'priorityDiv'
     const priorityDiv = document.createElement('div');
     priorityDiv.id = 'priorityDiv';
-    appendMultipleNodesToParent(priorityDiv, lowPriorityLabel, mediumPriorityLabel, highPriorityLabel);
+    helperfunction.appendMultipleNodesToParent(priorityDiv, lowPriorityLabel, mediumPriorityLabel, highPriorityLabel);
 
     // Append priorityDiv to priorityField
     priorityField.appendChild(priorityDiv);
@@ -287,16 +336,15 @@ const addTodoPopUp = () => {
     dueDateLabel.setAttribute('aria-label', 'required');
 
     // get todays date
-    const today = currentDate();
-    console.log(today);
+    const today = helperfunction.currentDate();
+
     const dueDateInput = document.createElement('input');
     dueDateInput.id = 'dueDateInput';
     dueDateInput.setAttribute('type', 'date'); 
-    // TODO - MUST FIX MIN ATTRIBUE NOT WORKING  
     dueDateInput.setAttribute('min', today);   
     dueDateInput.required = true;
 
-    appendMultipleNodesToParent(dueDateField, dueDateLabel, dueDateInput);
+    helperfunction.appendMultipleNodesToParent(dueDateField, dueDateLabel, dueDateInput);
 
     // Ask user what Project to append the Todo to
 
@@ -321,7 +369,7 @@ const addTodoPopUp = () => {
     chooseProjectInput.required = true;
     chooseProjectInput.addEventListener("click", clearChosenOption);
 
-    appendMultipleNodesToParent (chooseProjectField, chooseProjectLabel, chooseProjectInput);
+    helperfunction.appendMultipleNodesToParent(chooseProjectField, chooseProjectLabel, chooseProjectInput);
 
     // Give user options to append Todo to 
     const projectOptions = document.createElement('datalist');
@@ -354,7 +402,7 @@ const addTodoPopUp = () => {
     cancelButton.id = 'cancelButton';
     cancelButton.innerText = 'Cancel';
 
-    appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
+    helperfunction.appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
 }
 
         // Todo Form is Submited - Capture User Input
@@ -369,7 +417,7 @@ const captureForm = (event) => {
     let description:string = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
 
     // Prevents 'title' being blank
-    if (isBlank(title)) {
+    if (helperfunction.isBlank(title)) {
         return
     }
 
@@ -377,11 +425,9 @@ const captureForm = (event) => {
         var priority:string = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
         let date: string = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
         var dueDate: Date = new Date(date);
-        var project:string = (<HTMLInputElement>document.querySelector('input#chooseProjectInput')).value;
+        var projectTitle:string = (<HTMLInputElement>document.querySelector('input#chooseProjectInput')).value;
     }
-
-    console.log(dueDate);
-    submitFormInfo(title, description, priority, dueDate, project);
+    submitFormInfo(title, description, priority, dueDate, projectTitle);
 
     closePopUp();
 }
@@ -432,7 +478,7 @@ const addProjectPopUp = () => {
     titleInput.required = true;
     titleInput.autofocus = true;
 
-    appendMultipleNodesToParent(titleField, titleLabel, titleInput);
+    helperfunction.appendMultipleNodesToParent(titleField, titleLabel, titleInput);
 
     // Ask user for 'description' of Project
     const descriptionField = document.createElement('p');
@@ -450,7 +496,7 @@ const addProjectPopUp = () => {
     descriptionInput.setAttribute('rows', '3');
     descriptionInput.setAttribute('placeholder', 'Description is optional...');
 
-    appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
+    helperfunction.appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
 
     // Add Buttons
     const buttonsDiv = document.createElement('div');
@@ -467,7 +513,7 @@ const addProjectPopUp = () => {
     cancelButton.id = 'cancelButton';
     cancelButton.innerText = 'Cancel';
 
-    appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
+    helperfunction.appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
 }
 
 const clearChosenOption = (event) => {
@@ -480,16 +526,17 @@ const populateProjectsList = () => {
     const projectsArray = projectModule.listofProjects;
 
     projectsArray.forEach(project => {
-        let ProjecttoBeListed = document.createElement('li');
-        ProjecttoBeListed.classList.add('project')
-        ProjecttoBeListed.innerText = project.title;
-        projectUnorderedList.appendChild(ProjecttoBeListed);
+        let ProjectToBeListed = document.createElement('li');
+        ProjectToBeListed.classList.add('project')
+        ProjectToBeListed.addEventListener('click', populateRightGrid);
+        ProjectToBeListed.innerText = project.title;
+        projectUnorderedList.appendChild(ProjectToBeListed);
     });
 }
 
 const updateProjectsInDom = () => {
     let nodeToRemove = document.querySelector('#projectUnorderedList');
-    removeChildNodes(nodeToRemove);
+    helperfunction.removeChildNodes(nodeToRemove);
 
     populateProjectsList();
 }
@@ -505,10 +552,10 @@ const closePopUp = () => {
 const newTodoFormSubmission = 'newTodoFormSubmition';
 const newProjectFormSubmission = 'newProjectFormSubmission';
 
-const submitFormInfo = (title: string, description: string, priority?: string, dueDate?: Date, project?: string) => {
+const submitFormInfo = (title: string, description: string, priority?: string, dueDate?: Date, projectTitle?: string) => {
     // if priority and date are NOT null, then it's a todoForm
     if(priority != null && dueDate != null) {
-        PubSub.publish(newTodoFormSubmission, {title, description, priority, dueDate});
+        PubSub.publish(newTodoFormSubmission, {title, description, priority, dueDate, projectTitle});
     }
     // else its a projectForm
     else {
@@ -516,10 +563,9 @@ const submitFormInfo = (title: string, description: string, priority?: string, d
     }
 }
 
-const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, dueDate, project}) {
+const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, dueDate, projectTitle}) {
     let newTodo = todoModule.newTodo(title, priority, dueDate, description);
-    console.log(newTodo);
-    console.log(project);
+    projectModule.appendTodoToProject(newTodo, projectTitle);
 });
 
 const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title, description}) {
