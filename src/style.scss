@@ -133,9 +133,6 @@ body {
         #expandProjectsArrow {
             margin-right: 5%;
         }
-        &:hover {
-            @include leftGridHoverEffect();
-        }
     }
     #listOfProjectsDiv {
         #projectUnorderedList {
@@ -172,21 +169,46 @@ body {
 // Rightsude of Grid
 #stickyRightDiv {
     #projectAndTodosDiv {
+        margin-top: 25px;
         display: grid;
         grid-template-columns: 1fr;
         grid-template-rows: auto;
         background-color: $light-grey;
-        width: 50%;
+        width: 90%;
         margin-left: auto;
         margin-right: auto;
         text-align: center;
         #projectHeader {
             font-size: 1.5em;
         }
+        #labelTodoListDiv {
+            margin: 10px 5px 10px 0px;
+            padding: 0px 10px 0px 10px;
+            display: grid;
+            grid-template-columns: 1fr 4fr 4fr 1fr;
+            background-color: $pink-attack;
+            color: $white;
+            font-weight: 800;
+        }
         .listTodosInRowsDiv {
             margin: 10px 5px 10px 0px;
             display: grid;
             grid-template-columns: 1fr 4fr 4fr 1fr;
+            img {
+                margin: auto;
+                height: 30px;
+                width: auto;
+            }
+            .lowPriority {
+                content: url(./images/setLow.svg);
+
+            }
+            .mediumPriority {
+                content: url(./images/setMedium.svg);
+            }
+            .highPriority {
+                content: url(./images/setHigh.svg);
+            }
         }
         input {
             margin:auto;
