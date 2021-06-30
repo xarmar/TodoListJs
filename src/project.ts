@@ -1,15 +1,4 @@
-// projectModule
-type Priority = 'low' | 'medium' | 'high';
-
-type Todo = {
-    parentProject: string;
-    priority: Priority;
-    title: string;
-    description: string;
-    dueDate: Date;
-    notes: string[];
-    completed: boolean;
-}
+import { Priority, Todo, Project } from "./types";
 
 export const projectModule = (() => {
 
@@ -51,14 +40,24 @@ export const projectModule = (() => {
                 console.log(project);
             }
         });
+    }
 
+    const findProject = (projectTitle: string) => {
+        let projectToReturn;
+        listOfProjects.forEach(project => {
+            if(projectTitle === project.title) {
+                projectToReturn = project
+            }
+        });
+        return projectToReturn
     }
 
     return {
         listofProjects: listOfProjects,
         newProject: newProject,
         addTodoToProject : addTodoToProject,
-        appendTodoToProject: appendTodoToProject
+        appendTodoToProject: appendTodoToProject,
+        findProject: findProject
     }
     
     })();
