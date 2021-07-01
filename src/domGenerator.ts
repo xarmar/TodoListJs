@@ -42,7 +42,7 @@ leftHeaderDiv.appendChild(expander);
 const addTodo = document.createElement('p');
 addTodo.innerText = '+';
 addTodo.classList.add('navOption');
-addTodo.addEventListener('click', addTodoPopUp);
+addTodo.addEventListener('click', todoPopoUp);
 
 const history = document.createElement('p');
 history.innerText = '\u{1F56E}';
@@ -52,7 +52,7 @@ helperfunction.appendMultipleNodesToParent(rightHeaderDiv, addTodo, history);
 
 }
 
-// Runs when 'Expand' Menu in NavBar is Clicked
+// Runs when 'Expand' Menu in NavBar is Clicked or when a project is Added
 const toggleLeftStickyNavBar = () => {
     let grid = document.querySelector('#gridDiv');
     grid.classList.toggle('expandGrid');
@@ -88,7 +88,8 @@ const generateGrid = () => {
 
 }
 
-// Populates Left-Grid 
+// Left-Grid
+    // Populates Left-Grid 
 const populateLeftGrid = () => {
     let stickyLeftDiv = document.querySelector('#stickyLeftDiv');
 
@@ -103,13 +104,16 @@ const populateLeftGrid = () => {
     // populate day options
     const today = document.createElement('li');
     today.id = 'today';
-    today.innerText = 'Today'
+    today.innerText = 'Today';
+    today.addEventListener('click', populateToday);
     const tomorrow = document.createElement('li');
     tomorrow.id = 'tomorrow';
     tomorrow.innerText = 'Tomorrow';
+    tomorrow.addEventListener('click', populateTomorrow);
     const week = document.createElement('li');
     week.id = 'week';
     week.innerText = 'Week';
+    week.addEventListener('click', populateWeek);
     helperfunction.appendMultipleNodesToParent(optionsList, today, tomorrow, week);
 
     // Init displayProjectsDiv
@@ -140,15 +144,41 @@ const populateLeftGrid = () => {
     const addProject = document.createElement('p');
     addProject.id = 'addProject';
     addProject.innerHTML = "<span id = 'plus'>+</span> New Project"
-    addProject.addEventListener('click', addProjectPopUp);
+    addProject.addEventListener('click', projectPopUp);
     listOfProjectsDiv.appendChild(addProject);
 }
 
-const populateRightGrid = (event?, projectInput?:string) => {
+    // Populates left-Grid with all projects in listOfProjects
+const populateSideBarProjectsList = () => {
+    let projectUnorderedList = document.querySelector('#projectUnorderedList');
+    
+    const projectsArray = projectModule.listofProjects;
+
+    projectsArray.forEach(project => {
+        let ProjectToBeListed = document.createElement('li');
+        ProjectToBeListed.classList.add('project')
+        ProjectToBeListed.addEventListener('click', sideBarProjectClicked);
+        ProjectToBeListed.innerText = project.title;
+        projectUnorderedList.appendChild(ProjectToBeListed);
+    });
+}
+    // Removes previous unordered list of projects in left-grid and update them.
+const updateSideBarProjects = () => {
+    let nodeToRemove = document.querySelector('#projectUnorderedList');
+    helperfunction.removeChildNodes(nodeToRemove);
+
+    populateSideBarProjectsList();
+}
+
+// Right-Grid
+    // Populates Right-Grid
+const populateRightGrid = (event?, titleOfProject?:string, clearPrevious?: boolean) => {
     const stickyRightDiv = document.querySelector('#stickyRightDiv');
 
     // Remove previous Nodes on stickyRightDiv
-    helperfunction.removeChildNodes(stickyRightDiv);
+    if (clearPrevious) {
+        helperfunction.removeChildNodes(stickyRightDiv);
+    }
 
     // Create Div where elements will be appended
     const projectAndTodosDiv = document.createElement('div');
@@ -160,8 +190,8 @@ const populateRightGrid = (event?, projectInput?:string) => {
     if (event !== undefined) {
         projectTitle = event.target.innerText;
     }
-    else if (projectInput) {
-        projectTitle = projectInput;
+    else if (titleOfProject) {
+        projectTitle = titleOfProject;
     }
 
     let chosenProject: Project = projectModule.findProject(projectTitle);   
@@ -243,9 +273,9 @@ const populateRightGrid = (event?, projectInput?:string) => {
 // FORMS
 let showingPopUp = false;
 
-    // -------------------------TODO FORM --------------------------------------
-        // Runs if '+' button in NavBar Clicked
-const addTodoPopUp = () => {
+// TODO FORM
+    // Runs if '+' button in NavBar Clicked
+const todoPopoUp = () => {
     if (showingPopUp) {
         return
     }
@@ -456,37 +486,9 @@ const addTodoPopUp = () => {
     helperfunction.appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
 }
 
-        // Todo Form is Submited - Capture User Input
-const captureForm = (event) => {
-    // prevent page from refreshing
-    event.preventDefault();
-
-    let idOfForm = event.target.id;
-
-    // get form data
-    let title:string = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
-    let description:string = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
-
-    // Prevents 'title' being blank
-    if (helperfunction.isBlank(title)) {
-        return
-    }
-
-    if (idOfForm === 'todoForm') {
-        var priority:string = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
-        let date: string = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
-        var dueDate: Date = new Date(date);
-        var projectTitle:string = (<HTMLSelectElement>document.querySelector('select#chooseProjectInput')).value;
-    }
-
-    submitFormInfo(title, description, priority, dueDate, projectTitle);
-
-    closePopUp();
-    closeLeftStickyNavBar();
-}
-    // ------------------------ PROJECT FORM -----------------------------------
-        // Runs if 'newProject' button in leftStickyNavBar Clicked
-const addProjectPopUp = () => {
+// PROJECT FORM
+    // Runs if 'newProject' button in leftStickyNavBar Clicked
+const projectPopUp = () => {
     if (showingPopUp) {
         return
     }
@@ -574,25 +576,33 @@ const addProjectPopUp = () => {
     helperfunction.appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
 }
 
-const populateSideBarProjectsList = () => {
-    let projectUnorderedList = document.querySelector('#projectUnorderedList');
-    
-    const projectsArray = projectModule.listofProjects;
+    // When a Form is Submited, capture User Input
+const captureForm = (event) => {
+    // prevent page from refreshing
+    event.preventDefault();
 
-    projectsArray.forEach(project => {
-        let ProjectToBeListed = document.createElement('li');
-        ProjectToBeListed.classList.add('project')
-        ProjectToBeListed.addEventListener('click', sideBarProjectClicked);
-        ProjectToBeListed.innerText = project.title;
-        projectUnorderedList.appendChild(ProjectToBeListed);
-    });
-}
+    let idOfForm = event.target.id;
 
-const updateSideBarProjects = () => {
-    let nodeToRemove = document.querySelector('#projectUnorderedList');
-    helperfunction.removeChildNodes(nodeToRemove);
+    // get form data
+    let title:string = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
+    let description:string = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
 
-    populateSideBarProjectsList();
+    // Prevents 'title' being blank
+    if (helperfunction.isBlank(title)) {
+        return
+    }
+
+    if (idOfForm === 'todoForm') {
+        var priority:string = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
+        let date: string = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
+        var dueDate: Date = new Date(date);
+        var projectTitle:string = (<HTMLSelectElement>document.querySelector('select#chooseProjectInput')).value;
+    }
+
+    submitFormInfo(title, description, priority, dueDate, projectTitle);
+
+    closePopUp();
+    closeLeftStickyNavBar();
 }
 
 // Closes PopUps whenever the Cancel Button is clicked or when a Form is sucessfully submitted
@@ -600,6 +610,32 @@ const closePopUp = () => {
     let popUpDiv = document.querySelector('#popUpDiv');
     popUpDiv.remove();
     showingPopUp = false;
+}
+
+const populateToday = (event) => {
+    console.log('later');
+    // let todayDate = new Date;
+    // let todayString: string = format(todayDate , 'PP');
+    // let todosToShow: Todo[];
+    
+    // let allProjects = projectModule.listofProjects;
+
+    // allProjects.forEach(project => {
+    //     project.children.forEach(todo => {
+    //         if (format(todo.dueDate, 'PP') === todayString) {
+    //             todosToShow.push(todo);
+    //         }
+    //     });
+    // });
+    
+}
+
+const populateTomorrow = () => {
+    console.log('later');
+}
+
+const populateWeek = () => {
+    console.log('later');
 }
 
 // PUBSUB ----------------------- PUBSUB ----------------------------- PUBSUB
@@ -612,7 +648,7 @@ const sideBarProjectClicked = (event) => {
 }
 
 const sideBarProjectListener = PubSub.subscribe(sideBarProjectClick, function (sideBarProjectClick, event) {
-    populateRightGrid(event.event);
+    populateRightGrid(event.event, undefined, true);
     toggleLeftStickyNavBar();
 });
 
@@ -630,7 +666,7 @@ const submitFormInfo = (title: string, description: string, priority?: string, d
 const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, dueDate, projectTitle}) {
     let newTodo = todoModule.newTodo(title, priority, dueDate, description);
     projectModule.appendTodoToProject(newTodo, projectTitle);
-    populateRightGrid(undefined, projectTitle);
+    populateRightGrid(undefined, projectTitle, true);
 });
 
 const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title, description}) {
