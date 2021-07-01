@@ -4,6 +4,8 @@ import { projectModule } from "./project";
 import PubSub from 'pubsub-js';
 import { todoModule } from "./todo";
 import { node } from "webpack";
+import { format } from 'date-fns'
+
 
 export const dom = (() => {
 
@@ -126,7 +128,7 @@ const populateLeftGrid = () => {
     projectUnorderedList.id = 'projectUnorderedList'
     listOfProjectsDiv.appendChild(projectUnorderedList);
 
-    populateProjectsList();
+    populateSideBarProjectsList();
 
     const addProject = document.createElement('p');
     addProject.id = 'addProject';
@@ -135,7 +137,7 @@ const populateLeftGrid = () => {
     listOfProjectsDiv.appendChild(addProject);
 }
 
-const populateRightGrid = (event) => {
+const populateRightGrid = (event?, projectInput?:string) => {
     const stickyRightDiv = document.querySelector('#stickyRightDiv');
 
     // Remove previous Nodes on stickyRightDiv
@@ -147,8 +149,15 @@ const populateRightGrid = (event) => {
     stickyRightDiv.appendChild(projectAndTodosDiv);
     
     // Identify requested Project
-    const projectTitle = event.target.innerText;
-    let chosenProject: Project = projectModule.findProject(projectTitle);     
+    let projectTitle;
+    if (event !== undefined) {
+        projectTitle = event.target.innerText;
+    }
+    if (projectInput) {
+        projectTitle = projectInput;
+    }
+
+    let chosenProject: Project = projectModule.findProject(projectTitle);   
 
     // Create Header with chosenProject.title
     let projectHeader = document.createElement('p');
@@ -189,7 +198,6 @@ const populateRightGrid = (event) => {
     let projectChildren = chosenProject.children
     projectChildren.forEach(todo => {
         let tableRow = document.createElement('tr');
-        // tableRow.classList.add('listTodosInRowsDiv');
 
         let completed: boolean = todo.completed
         let checkBoxTd = document.createElement('td');
@@ -202,10 +210,9 @@ const populateRightGrid = (event) => {
         let titleTd = document.createElement('td');
         titleTd.innerText = title
 
-        let dueDate: Date = todo.dueDate;
+        let dueDate: string = format(todo.dueDate , 'PP');
         let dueDateTd = document.createElement('td');
-        let dueDateString = dueDate.toDateString();
-        dueDateTd.innerText = dueDateString
+        dueDateTd.innerText = dueDate
 
         let priority: string = todo.priority;
         let priorityTd = document.createElement('td');
@@ -235,9 +242,7 @@ const addTodoPopUp = () => {
     if (showingPopUp) {
         return
     }
-
     
-
     showingPopUp = true;
     let gridDiv = document.querySelector('#gridDiv');
 
@@ -405,19 +410,15 @@ const addTodoPopUp = () => {
     chooseProjectLabel.setAttribute('for', 'chooseProjectInput');
     chooseProjectLabel.setAttribute('aria-label', 'required');
 
-    const chooseProjectInput = document.createElement('input');
+    const chooseProjectInput = document.createElement('select');
     chooseProjectInput.id = 'chooseProjectInput';
     chooseProjectInput.setAttribute('type', 'text');
     chooseProjectInput.setAttribute('list', 'projectOptions');
     chooseProjectInput.required = true;
-    chooseProjectInput.addEventListener("click", clearChosenOption);
 
     helperfunction.appendMultipleNodesToParent(chooseProjectField, chooseProjectLabel, chooseProjectInput);
 
     // Give user options to append Todo to 
-    const projectOptions = document.createElement('datalist');
-    projectOptions.id = 'projectOptions';
-    chooseProjectField.appendChild(projectOptions);
 
     let projectList = projectModule.listofProjects;
 
@@ -428,7 +429,7 @@ const addTodoPopUp = () => {
         projectOption.innerText = title
         projectOption.classList.add('projectOption');
 
-        projectOptions.appendChild(projectOption);
+        chooseProjectInput.appendChild(projectOption);
     });
 
     // Add Buttons
@@ -468,7 +469,7 @@ const captureForm = (event) => {
         var priority:string = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
         let date: string = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
         var dueDate: Date = new Date(date);
-        var projectTitle:string = (<HTMLInputElement>document.querySelector('input#chooseProjectInput')).value;
+        var projectTitle:string = (<HTMLSelectElement>document.querySelector('select#chooseProjectInput')).value;
     }
     submitFormInfo(title, description, priority, dueDate, projectTitle);
 
@@ -519,7 +520,7 @@ const addProjectPopUp = () => {
     const titleInput = document.createElement('input');
     titleInput.id = 'titleInput'
     titleInput.setAttribute('type', 'text');
-    titleInput.setAttribute('maxlength', '14');
+    titleInput.setAttribute('maxlength', '20');
     titleInput.required = true;
     titleInput.autofocus = true;
 
@@ -561,11 +562,7 @@ const addProjectPopUp = () => {
     helperfunction.appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
 }
 
-const clearChosenOption = (event) => {
-    event.target.value = null;
-}
-
-const populateProjectsList = () => {
+const populateSideBarProjectsList = () => {
     let projectUnorderedList = document.querySelector('#projectUnorderedList');
     
     const projectsArray = projectModule.listofProjects;
@@ -579,11 +576,11 @@ const populateProjectsList = () => {
     });
 }
 
-const updateProjectsInDom = () => {
+const updateSideBarProjects = () => {
     let nodeToRemove = document.querySelector('#projectUnorderedList');
     helperfunction.removeChildNodes(nodeToRemove);
 
-    populateProjectsList();
+    populateSideBarProjectsList();
 }
 
 // Closes PopUps whenever the Cancel Button is clicked or when a Form is sucessfully submitted
@@ -633,12 +630,13 @@ const submitFormInfo = (title: string, description: string, priority?: string, d
 const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, dueDate, projectTitle}) {
     let newTodo = todoModule.newTodo(title, priority, dueDate, description);
     projectModule.appendTodoToProject(newTodo, projectTitle);
+    populateRightGrid(undefined, projectTitle);
 });
 
 const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title, description}) {
     let newProject = projectModule.newProject(title, description);
     projectModule.listofProjects.push(newProject);
-    updateProjectsInDom();
+    updateSideBarProjects();
 });
 
 return {
