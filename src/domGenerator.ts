@@ -157,46 +157,60 @@ const populateRightGrid = (event) => {
     projectAndTodosDiv.appendChild(projectHeader);
 
     // Label The Todo's that will be appended
-    let labelTodoListDiv = document.createElement('div');
-    labelTodoListDiv.id = 'labelTodoListDiv';
-    projectAndTodosDiv.appendChild(labelTodoListDiv);
+    let tableDiv = document.createElement('div');
+    tableDiv.id = 'tableDiv';
+    projectAndTodosDiv.appendChild(tableDiv);
 
-    let statusLabel = document.createElement('p');
+    const table = document.createElement('table');
+    tableDiv.appendChild(table);
+    const thead = document.createElement('thead');
+    table.appendChild(thead);
+    let trForLabel = document.createElement('tr');
+    thead.appendChild(trForLabel);
+
+    let statusLabel = document.createElement('th');
     statusLabel.innerText = 'Status';
 
-    let titleLabel = document.createElement('p');
+    let titleLabel = document.createElement('th');
     titleLabel.innerText = 'Title';
 
-    let dateLabel = document.createElement('p');
+    let dateLabel = document.createElement('th');
     dateLabel.innerText = 'Due Date';
 
-    let priorityLabel = document.createElement('p');
+    let priorityLabel = document.createElement('th');
     priorityLabel.innerText = 'Priority';
 
-    helperfunction.appendMultipleNodesToParent(labelTodoListDiv, statusLabel, titleLabel, dateLabel, priorityLabel);
+    helperfunction.appendMultipleNodesToParent(trForLabel, statusLabel, titleLabel, dateLabel, priorityLabel);
+
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
 
     // Loop through Project's children Todo's
     let projectChildren = chosenProject.children
     projectChildren.forEach(todo => {
-        let listTodosInRowsDiv = document.createElement('div');
-        listTodosInRowsDiv.classList.add('listTodosInRowsDiv');
+        let tableRow = document.createElement('tr');
+        // tableRow.classList.add('listTodosInRowsDiv');
 
         let completed: boolean = todo.completed
+        let checkBoxTd = document.createElement('td');
         let checkbox = document.createElement('input');
         checkbox.setAttribute('type', 'checkbox');
+        checkBoxTd.appendChild(checkbox);
         
 
         let title: string = todo.title;
-        let titleP = document.createElement('p');
-        titleP.innerText = title
+        let titleTd = document.createElement('td');
+        titleTd.innerText = title
 
         let dueDate: Date = todo.dueDate;
-        let dueDateP = document.createElement('p');
+        let dueDateTd = document.createElement('td');
         let dueDateString = dueDate.toDateString();
-        dueDateP.innerText = dueDateString
+        dueDateTd.innerText = dueDateString
 
         let priority: string = todo.priority;
+        let priorityTd = document.createElement('td');
         let priorityImg = document.createElement('img');
+        priorityTd.appendChild(priorityImg);
         if (priority === 'low') {
             priorityImg.classList.add('lowPriority')
         }
@@ -207,8 +221,8 @@ const populateRightGrid = (event) => {
             priorityImg.classList.add('highPriority');
         }
 
-        helperfunction.appendMultipleNodesToParent(listTodosInRowsDiv, checkbox, titleP, dueDateP, priorityImg);
-        projectAndTodosDiv.appendChild(listTodosInRowsDiv);
+        helperfunction.appendMultipleNodesToParent(tableRow, checkBoxTd, titleTd, dueDateTd, priorityTd);
+        tbody.appendChild(tableRow);
     });
 }
 
