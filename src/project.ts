@@ -37,7 +37,6 @@ export const projectModule = (() => {
         listOfProjects.forEach(project => {
             if(project.title === projectTitle) {
                 project.children.push(todo);
-                console.log(project);
             }
         });
     }
