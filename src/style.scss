@@ -118,7 +118,7 @@ body {
             margin: 20px 0px 20px 30px;
             li {
                 margin-top: 15px;
-                font-size: 1.5em;
+                font-size: 1.2em;
                 &:hover {
                  @include leftGridHoverEffect();
                 }
@@ -133,7 +133,7 @@ body {
         @include flexRow();
         p {
             line-height: 0px;
-            font-size: 1.5em;
+            font-size: 1.2em;
         }
         #expandProjectsArrow {
             margin-right: 5%;
@@ -146,7 +146,7 @@ body {
                 margin: 15px 20px 15px 20px;
                 padding-left: 0px;
                 list-style-type: none;
-                font-size:1.2em;
+                font-size:1.1em;
                 &:hover {
                     cursor: pointer;
                     text-decoration: underline;
@@ -155,6 +155,7 @@ body {
         }
         #addProject {
             @extend .project;
+            font-size: 1em;
             margin-left: 25px;
             max-width: fit-content;
             color: $white;
@@ -193,7 +194,7 @@ body {
             color: $white;
             table {
                 th, td, input {
-                    padding: 10px 20px 10px 20px;
+                    padding: 5px 10px 5px 10px;
                 }
                 th {
                     background-color: $dark-grey;
