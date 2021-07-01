@@ -60,6 +60,13 @@ const toggleLeftStickyNavBar = () => {
     stickyLeftDiv.classList.toggle('displayNone');
 }
 
+const closeLeftStickyNavBar = () => {
+    let grid = document.querySelector('#gridDiv');
+    grid.classList.add('expandGrid');
+    let stickyLeftDiv = document.querySelector('#stickyLeftDiv');
+    stickyLeftDiv.classList.add('displayNone');
+}
+
 // Generates Grid
 const generateGrid = () => {
 
@@ -153,7 +160,7 @@ const populateRightGrid = (event?, projectInput?:string) => {
     if (event !== undefined) {
         projectTitle = event.target.innerText;
     }
-    if (projectInput) {
+    else if (projectInput) {
         projectTitle = projectInput;
     }
 
@@ -442,7 +449,7 @@ const addTodoPopUp = () => {
     addButton.innerText = 'Add';
 
     const cancelButton = document.createElement('button');
-    cancelButton.addEventListener('click', todoAddButtonClicked);
+    cancelButton.addEventListener('click', closePopUp);
     cancelButton.id = 'cancelButton';
     cancelButton.innerText = 'Cancel';
 
@@ -471,9 +478,11 @@ const captureForm = (event) => {
         var dueDate: Date = new Date(date);
         var projectTitle:string = (<HTMLSelectElement>document.querySelector('select#chooseProjectInput')).value;
     }
+
     submitFormInfo(title, description, priority, dueDate, projectTitle);
 
     closePopUp();
+    closeLeftStickyNavBar();
 }
     // ------------------------ PROJECT FORM -----------------------------------
         // Runs if 'newProject' button in leftStickyNavBar Clicked
@@ -520,7 +529,7 @@ const addProjectPopUp = () => {
     const titleInput = document.createElement('input');
     titleInput.id = 'titleInput'
     titleInput.setAttribute('type', 'text');
-    titleInput.setAttribute('maxlength', '20');
+    titleInput.setAttribute('maxlength', '15');
     titleInput.required = true;
     titleInput.autofocus = true;
 
@@ -555,7 +564,10 @@ const addProjectPopUp = () => {
     addButton.innerText = 'Add';
 
     const cancelButton = document.createElement('button');
-    cancelButton.addEventListener('click', closePopUp);
+    cancelButton.addEventListener('click', function() {
+        closePopUp();
+        toggleLeftStickyNavBar();
+    });
     cancelButton.id = 'cancelButton';
     cancelButton.innerText = 'Cancel';
 
@@ -594,7 +606,6 @@ const closePopUp = () => {
 const newTodoFormSubmission = 'newTodoFormSubmition';
 const newProjectFormSubmission = 'newProjectFormSubmission';
 const sideBarProjectClick = 'sideBarProjectClick';
-const todoAddButtonClick = 'todoAddButtonClick';
 
 const sideBarProjectClicked = (event) => {
     PubSub.publish(sideBarProjectClick, {event});
@@ -604,17 +615,6 @@ const sideBarProjectListener = PubSub.subscribe(sideBarProjectClick, function (s
     populateRightGrid(event.event);
     toggleLeftStickyNavBar();
 });
-
-const todoAddButtonClicked = (event) => {
-    PubSub.publish(todoAddButtonClick, {event})
-}
-
-const todoAddButtonListener = PubSub.subscribe(todoAddButtonClick, function (todoAddButtonClicked, event) {
-    captureForm(event.event);
-    closePopUp();
-
-});
-
 
 const submitFormInfo = (title: string, description: string, priority?: string, dueDate?: Date, projectTitle?: string) => {
     // if priority and date are NOT null, then it's a todoForm
