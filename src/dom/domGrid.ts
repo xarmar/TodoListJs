@@ -63,6 +63,10 @@ export const domGrid = (() => {
                 break;
         }
 
+        // Sort Array by closest dueDate to farthest
+        todosThatWillPopulateTable.sort((a,b)=>a.dueDate.getTime()- b.dueDate.getTime());
+
+
         const stickyRightDiv = document.querySelector('#stickyRightDiv');
 
         // Remove previouly attached nodes
@@ -333,6 +337,10 @@ export const domGrid = (() => {
 
         // Loop through Project's children Todo's
         let projectChildren = chosenProject.children
+
+        // Sort Array by closest dueDate to farthest
+        projectChildren.sort((a,b)=>a.dueDate.getTime()- b.dueDate.getTime());
+        
         projectChildren.forEach(todo => {
             let tableRow = document.createElement('tr');
 
