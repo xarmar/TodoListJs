@@ -193,11 +193,15 @@ body {
             background-color: $light-grey;
             color: $white;
             table {
+                border-spacing: 0px;
                 th, td, input {
                     padding: 5px 10px 5px 10px;
                 }
                 th {
                     background-color: $dark-grey;
+                }
+                td {
+                    border-bottom: 1px solid $dark-grey;
                 }
                 input {
                     margin: auto;
