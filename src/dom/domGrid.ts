@@ -4,7 +4,8 @@ import { projectModule } from "../project";
 import { helperfunction } from "../helperFunctions";
 import { domForm } from "./domForm";
 import { domNavBar } from "./domNavBar";
-import { pubSubModule } from "../pubSub/pubSub";
+import * as moment from "moment";
+
 
 // Grid (left-side and right side) DOM maniputalion is here
 
@@ -32,33 +33,151 @@ export const domGrid = (() => {
 
     }
 
-    // Left-Grid
+    //  Populates Right-Grid Based on dueDate
+    const showTodosByDueDate = (event) => {
+        
+        let header:string = event.target.innerText;
+        
+        // Get Today's date
+        let date = new Date;
 
-    const populateToday = (event) => {
-        console.log('later');
-        // let todayDate = new Date;
-        // let todayString: string = format(todayDate , 'PP');
-        // let todosToShow: Todo[];
-        
-        // let allProjects = projectModule.listofProjects;
-    
-        // allProjects.forEach(project => {
-        //     project.children.forEach(todo => {
-        //         if (format(todo.dueDate, 'PP') === todayString) {
-        //             todosToShow.push(todo);
-        //         }
-        //     });
-        // });
-        
+        // Init weekDate
+        let weekDate = new Date;
+
+        // Init array
+        let todosThatWillPopulateTable: Todo[];
+
+        switch (header) {
+            case 'Today':
+                todosThatWillPopulateTable = generateArrayOfTodosThatPopulateTable(date);
+                break;
+            case 'Tomorrow':
+                date.setDate(date.getDate() + 1);
+                todosThatWillPopulateTable = generateArrayOfTodosThatPopulateTable(date);
+                break;
+            case 'Week':
+                weekDate.setDate(weekDate.getDate() + 7);
+                todosThatWillPopulateTable = generateArrayOfTodosThatPopulateTable(date, weekDate);
+                break;
+            default:
+                break;
+        }
+
+        const stickyRightDiv = document.querySelector('#stickyRightDiv');
+
+        // Remove previouly attached nodes
+        helperfunction.removeChildNodes(stickyRightDiv);
+
+        // Close sidebar
+        domNavBar.toggleLeftStickyNavBar();
+
+        // Create Div where elements will be appended
+        const projectAndTodosDiv = document.createElement('div');
+        projectAndTodosDiv.id = 'projectAndTodosDiv';
+        stickyRightDiv.appendChild(projectAndTodosDiv);
+
+        // Create Header with chosenProject.title
+        let dayHeader = document.createElement('p');
+        dayHeader.innerText = header;
+        dayHeader.id = 'projectHeader';
+        projectAndTodosDiv.appendChild(dayHeader);
+
+        // Label The Todo's that will be appended
+        let tableDiv = document.createElement('div');
+        tableDiv.id = 'tableDiv';
+        projectAndTodosDiv.appendChild(tableDiv);
+
+        const table = document.createElement('table');
+        tableDiv.appendChild(table);
+        const thead = document.createElement('thead');
+        table.appendChild(thead);
+        let trForLabel = document.createElement('tr');
+        thead.appendChild(trForLabel);
+
+        let statusLabel = document.createElement('th');
+        statusLabel.innerText = 'Status';
+
+        let titleLabel = document.createElement('th');
+        titleLabel.innerText = 'Title';
+
+        let dateLabel = document.createElement('th');
+        dateLabel.innerText = 'Due Date';
+
+        let priorityLabel = document.createElement('th');
+        priorityLabel.innerText = 'Priority';
+
+        helperfunction.appendMultipleNodesToParent(trForLabel, statusLabel, titleLabel, dateLabel, priorityLabel);
+
+        const tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+
+        // Loop through todosToshow
+        todosThatWillPopulateTable.forEach(todo => {
+            let tableRow = document.createElement('tr');
+
+            let completed: boolean = todo.completed
+            let checkBoxTd = document.createElement('td');
+            let checkbox = document.createElement('input');
+            checkbox.setAttribute('type', 'checkbox');
+            checkBoxTd.appendChild(checkbox);
+            
+
+            let title: string = todo.title;
+            let titleTd = document.createElement('td');
+            titleTd.innerText = title
+
+            let dueDate: string = format(todo.dueDate , 'PP');
+            let dueDateTd = document.createElement('td');
+            dueDateTd.innerText = dueDate
+
+            let priority: string = todo.priority;
+            let priorityTd = document.createElement('td');
+            let priorityImg = document.createElement('img');
+            priorityTd.appendChild(priorityImg);
+            if (priority === 'low') {
+                priorityImg.classList.add('lowPriority')
+            }
+            else if (priority === 'medium') {
+                priorityImg.classList.add('mediumPriority');
+            }
+            else if (priority === 'high') {
+                priorityImg.classList.add('highPriority');
+            }
+
+            helperfunction.appendMultipleNodesToParent(tableRow, checkBoxTd, titleTd, dueDateTd, priorityTd);
+            tbody.appendChild(tableRow);
+        });
+    }   
+
+    const generateArrayOfTodosThatPopulateTable = (date: Date, weekDate?: Date) => {
+        let todosThatWillPopulateTableArray: Todo[] = [];
+
+        if (!weekDate) {
+            projectModule.listofProjects.forEach(project => {
+                project.children.forEach(todo => {
+                    if(format(todo.dueDate, 'PP') === format(date, 'PP')) {
+                        todosThatWillPopulateTableArray.push(todo);
+                    }
+                });
+            });
+        }
+        else {
+            console.log(weekDate);
+            projectModule.listofProjects.forEach(project => {
+                project.children.forEach(todo => {
+                    let formattedTodoDate = moment(todo.dueDate).format('YYYY-MM-DD');
+                    let formattedDate = moment(date).format('YYYY-MM-DD');
+                    let formattedWeekDate = moment(weekDate).format('YYYY-MM-DD');
+                    console.log({formattedTodoDate, formattedDate, formattedWeekDate});
+                    if(moment(formattedTodoDate).isBetween(formattedDate, formattedWeekDate, undefined, '[]')) {
+                        todosThatWillPopulateTableArray.push(todo);
+                    }
+                }); 
+            });
+        }
+        return todosThatWillPopulateTableArray
     }
-    
-    const populateTomorrow = () => {
-        console.log('later');
-    }
-    
-    const populateWeek = () => {
-        console.log('later');
-    }
+
 
     // Populates Left-Grid 
     const populateLeftGrid = () => {
@@ -76,15 +195,21 @@ export const domGrid = (() => {
         const today = document.createElement('li');
         today.id = 'today';
         today.innerText = 'Today';
-        today.addEventListener('click', populateToday);
+        today.addEventListener('click', function(event) {
+            showTodosByDueDate(event);
+        });
         const tomorrow = document.createElement('li');
         tomorrow.id = 'tomorrow';
         tomorrow.innerText = 'Tomorrow';
-        tomorrow.addEventListener('click', populateTomorrow);
+        tomorrow.addEventListener('click', function(event) {
+            showTodosByDueDate(event);
+        });
         const week = document.createElement('li');
         week.id = 'week';
         week.innerText = 'Week';
-        week.addEventListener('click', populateWeek);
+        week.addEventListener('click', function(event) {
+            showTodosByDueDate(event);
+        });
         helperfunction.appendMultipleNodesToParent(optionsList, today, tomorrow, week);
 
         // Init displayProjectsDiv
@@ -244,7 +369,7 @@ export const domGrid = (() => {
             tbody.appendChild(tableRow);
         });
     }   
-    
+
     return  {
         generateGrid: generateGrid,
         populateLeftGrid: populateLeftGrid,
