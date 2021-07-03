@@ -1,7 +1,7 @@
 // Define unique 'types' that will be used in App
 export type Priority = 'low' | 'medium' | 'high';
 
-export type Todo = {
+export type TodoType = {
     parentProject: string;
     priority: Priority;
     title: string;
@@ -11,8 +11,8 @@ export type Todo = {
     completed: boolean;
 }
 
-export type Project = {
+export type ProjectType = {
     title: string;
     description: string;
-    children: Todo[];
+    children: TodoType[];
 }
