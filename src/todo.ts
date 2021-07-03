@@ -1,4 +1,8 @@
-import { Priority, Todo, Project } from "./types";
+import { Priority, TodoType, Project } from "./types";
+import { projectModule } from "./project";
+import { format } from 'date-fns';
+import * as moment from "moment";
+
 // todoModule
 export const todoModule = (() => {
     
@@ -49,9 +53,37 @@ export const todoModule = (() => {
         let newTodoObject = new Todo(title, priority, dueDate, description);
         return newTodoObject;
     }
+
+    const generateArrayOfTodosBasedOnDate = (date: Date, weekDate?: Date) => {
+        let todosThatWillPopulateTableArray: TodoType[] = [];
+
+        if (!weekDate) {
+            projectModule.listOfProjects.forEach(project => {
+                project.children.forEach(todo => {
+                    if(format(todo.dueDate, 'PP') === format(date, 'PP')) {
+                        todosThatWillPopulateTableArray.push(todo);
+                    }
+                });
+            });
+        }
+        else {
+            projectModule.listOfProjects.forEach(project => {
+                project.children.forEach(todo => {
+                    let formattedTodoDate = moment(todo.dueDate).format('YYYY-MM-DD');
+                    let formattedDate = moment(date).format('YYYY-MM-DD');
+                    let formattedWeekDate = moment(weekDate).format('YYYY-MM-DD');
+                    if(moment(formattedTodoDate).isBetween(formattedDate, formattedWeekDate, undefined, '[]')) {
+                        todosThatWillPopulateTableArray.push(todo);
+                    }
+                }); 
+            });
+        }
+        return todosThatWillPopulateTableArray
+    }
     
     return {
         newTodo: newTodo,
+        generateArrayOfTodosBasedOnDate: generateArrayOfTodosBasedOnDate
     }
     
     })();
