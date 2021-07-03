@@ -200,18 +200,22 @@ body {
                 th {
                     background-color: $dark-grey;
                 }
-                td {
-                    border-bottom: 1px solid $dark-grey;
-                }
                 input {
                     margin: auto;
                 }
                 td {
                     color: black;
+                    border-bottom: 1px solid $white;
                     img {
                         margin: auto;
                         height: 30px;
                         width: auto;
+                    }
+                }
+                .detailsExpandArrow {
+                    background-color: pink;
+                    &:hover {
+                        cursor: pointer;
                     }
                 }
                 .lowPriority {
