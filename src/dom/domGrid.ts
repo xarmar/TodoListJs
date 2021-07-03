@@ -98,6 +98,31 @@ export const domGrid = (() => {
         listOfProjectsDiv.appendChild(addProject);
     }
 
+    // Populates left-Grid with all projects in listOfProjects
+    const populateSideBarProjectsList = () => {
+        let projectUnorderedList = document.querySelector('#projectUnorderedList');
+        
+        const projectsArray = projectModule.listOfProjects;
+
+        projectsArray.forEach(project => {
+            let ProjectToBeListed = document.createElement('li');
+            ProjectToBeListed.classList.add('project')
+            ProjectToBeListed.addEventListener('click', function(event) {
+                domGrid.populateRightGrid(event, undefined);
+                domNavBar.toggleLeftStickyNavBar();
+            });
+            ProjectToBeListed.innerText = project.title;
+            projectUnorderedList.appendChild(ProjectToBeListed);
+        });
+    }
+        // Removes previous unordered list of projects in left-grid and update them.
+    const updateSideBarProjects = () => {
+        let nodeToRemove = document.querySelector('#projectUnorderedList');
+        helperfunction.removeChildNodes(nodeToRemove);
+
+        populateSideBarProjectsList();
+    }
+
     // Populates Right-Grid
     const populateRightGrid = (event?, titleOfProject?:string) => {
        
@@ -165,34 +190,8 @@ export const domGrid = (() => {
         // Close sidebar
         domNavBar.toggleLeftStickyNavBar();
     }   
-
-    // Populates left-Grid with all projects in listOfProjects
-    const populateSideBarProjectsList = () => {
-        let projectUnorderedList = document.querySelector('#projectUnorderedList');
-        
-        const projectsArray = projectModule.listOfProjects;
-
-        projectsArray.forEach(project => {
-            let ProjectToBeListed = document.createElement('li');
-            ProjectToBeListed.classList.add('project')
-            ProjectToBeListed.addEventListener('click', function(event) {
-                domGrid.populateRightGrid(event, undefined);
-                domNavBar.toggleLeftStickyNavBar();
-            });
-            ProjectToBeListed.innerText = project.title;
-            projectUnorderedList.appendChild(ProjectToBeListed);
-        });
-    }
-        // Removes previous unordered list of projects in left-grid and update them.
-    const updateSideBarProjects = () => {
-        let nodeToRemove = document.querySelector('#projectUnorderedList');
-        helperfunction.removeChildNodes(nodeToRemove);
-
-        populateSideBarProjectsList();
-    }
-
-    // Right-Grid
-
+    
+    // Populate Tables
     const populateTableWithTodoArray = (arrayOfTodos: TodoType[], stickyRightDiv: Node, headerOfTable?: string) => {
 
         const projectAndTodosDiv = document.createElement('div');
@@ -238,6 +237,7 @@ export const domGrid = (() => {
             let priorityLabel = document.createElement('th');
             priorityLabel.innerText = 'Priority';
 
+
             helperfunction.appendMultipleNodesToParent(trForLabel, statusLabel, titleLabel, dateLabel, priorityLabel);
 
             const tbody = document.createElement('tbody');
@@ -250,10 +250,20 @@ export const domGrid = (() => {
             let tableRow = document.createElement('tr');
 
             let completed: boolean = todo.completed
-            let checkBoxTd = document.createElement('td');
-            let checkbox = document.createElement('input');
-            checkbox.setAttribute('type', 'checkbox');
-            checkBoxTd.appendChild(checkbox);
+            let checkOrDeleteTd = document.createElement('td');
+            checkOrDeleteTd.id = 'checkOrDeleteTd';
+
+            let checkAsComplete = document.createElement('p');
+            checkAsComplete.innerText = '\u{2713}';
+            checkAsComplete.classList.add('checkOrDelete');
+
+            checkOrDeleteTd.appendChild(checkAsComplete);
+
+            // let sendToGarbage = document.createElement('p');
+            // sendToGarbage.innerText = '\u{1F5D1}';
+            // sendToGarbage.classList.add('checkOrDelete');
+            
+            // helperfunction.appendMultipleNodesToParent(checkOrDeleteTd, checkAsComplete, sendToGarbage);
             
 
             let title: string = todo.title;
@@ -278,8 +288,42 @@ export const domGrid = (() => {
                 priorityImg.classList.add('highPriority');
             }
 
-            helperfunction.appendMultipleNodesToParent(tableRow, checkBoxTd, titleTd, dueDateTd, priorityTd);
+            let detailsTd = document.createElement('td');
+            detailsTd.innerText = '\u{02C5}';
+            detailsTd.classList.add('detailsExpandArrow');
+
+            helperfunction.appendMultipleNodesToParent(tableRow, checkOrDeleteTd, titleTd, dueDateTd, priorityTd, detailsTd);
+
             tbody.appendChild(tableRow);
+
+            let expandedTodo = document.createElement('tr');
+            expandedTodo.classList.add('expandedTodo');
+
+            let singleCell = document.createElement('td');
+            singleCell.classList.add('expandedCell');
+            singleCell.setAttribute('colspan', '4');
+
+            let divInsideCell = document.createElement('div');
+            singleCell.appendChild(divInsideCell);
+
+            let parentProject = document.createElement('p');
+            parentProject.innerHTML= '<strong>Project</strong>: ' + 'something';
+
+            let edit = document.createElement('p');
+            edit.innerText= 'Edit';
+
+            let deleteTodo = document.createElement('p');
+            deleteTodo.innerText = 'Delete';
+
+            let description = document.createElement('p');
+            description.innerHTML = '<strong>Description</strong>: ' + 'something';
+            description.classList.add('todoDescription');
+
+            helperfunction.appendMultipleNodesToParent(divInsideCell, parentProject, edit, deleteTodo, description);
+            helperfunction.appendMultipleNodesToParent(expandedTodo, singleCell);
+
+            helperfunction.insertAfter(expandedTodo, tableRow);
+
         })
     }
 }
