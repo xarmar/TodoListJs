@@ -25,12 +25,12 @@ export const pubSubModule = (() => {
     const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, dueDate, projectTitle}) {
         let newTodo = todoModule.newTodo(title, priority, dueDate, description);
         projectModule.appendTodoToProject(newTodo, projectTitle);
-        domGrid.populateRightGrid(undefined, projectTitle, true);
+        domGrid.populateRightGrid(undefined, projectTitle);
     });
     
     const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title, description}) {
         let newProject = projectModule.newProject(title, description);
-        projectModule.listofProjects.push(newProject);
+        projectModule.listOfProjects.push(newProject);
         domGrid.updateSideBarProjects();
     });
 
