@@ -41,13 +41,20 @@ export const helperfunction = (() => {
         
         let today:string = cYear + '-' + cMonth + '-' + cDay ;
         return today;
+
+
+    }
+
+    const insertAfter = (newNode, referenceNode) => {
+        referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     }
 
     return {
         appendMultipleNodesToParent: appendMultipleNodesToParent,
         removeChildNodes: removeChildNodes,
         isBlank: isBlank,
-        currentDate: currentDate
+        currentDate: currentDate,
+        insertAfter: insertAfter
     }
 
 })();
