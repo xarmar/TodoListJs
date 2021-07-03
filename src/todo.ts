@@ -1,4 +1,4 @@
-import { Priority, TodoType, Project } from "./types";
+import { Priority, TodoType, ProjectType } from "./types";
 import { projectModule } from "./project";
 import { format } from 'date-fns';
 import * as moment from "moment";
