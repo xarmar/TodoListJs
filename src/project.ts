@@ -1,11 +1,11 @@
-import { Priority, Todo, Project } from "./types";
+import { Priority, TodoType, ProjectType } from "./types";
 
 export const projectModule = (() => {
 
     class Project {
         title: string;
         description: string;
-        children: Todo[];
+        children: TodoType[];
         
         constructor(title: string, description?: string) {
             this.title = title;
@@ -29,11 +29,11 @@ export const projectModule = (() => {
         return newObject;
     }
     
-    const addTodoToProject = (todo: Todo, project: Project) => {
+    const addTodoToProject = (todo: TodoType, project: Project) => {
         project.children.push(todo);
     }
 
-    const appendTodoToProject = (todo: Todo, projectTitle: string) => {
+    const appendTodoToProject = (todo: TodoType, projectTitle: string) => {
         listOfProjects.forEach(project => {
             if(project.title === projectTitle) {
                 project.children.push(todo);
@@ -52,7 +52,7 @@ export const projectModule = (() => {
     }
 
     return {
-        listofProjects: listOfProjects,
+        listOfProjects: listOfProjects,
         newProject: newProject,
         addTodoToProject : addTodoToProject,
         appendTodoToProject: appendTodoToProject,
