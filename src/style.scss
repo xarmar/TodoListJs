@@ -88,7 +88,7 @@ body {
 }
 
 .displayNone {
-    display: none !important;
+    display: none;
 }
 
 .expandGrid {
@@ -202,6 +202,9 @@ body {
                 }
                 input {
                     margin: auto;
+                    &:hover {
+                        cursor: pointer;
+                    }
                 }
                 td {
                     color: black;
@@ -212,10 +215,28 @@ body {
                         width: auto;
                     }
                 }
+                #checkOrDeleteTd {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-evenly;
+                }
                 .detailsExpandArrow {
                     background-color: pink;
                     &:hover {
                         cursor: pointer;
+                    }
+                }
+                .expandedCell {
+                    background-color: antiquewhite;
+                    div {
+                        font-size: 90%;
+                        display: grid;
+                        grid-template-columns: 3fr 1fr 1fr;
+                        grid-template-rows: 1fr 1fr;
+                        justify-items: start;
+                    }
+                    .todoDescription {
+                        // todo
                     }
                 }
                 .lowPriority {
