@@ -193,7 +193,7 @@ export const domForm = (() => {
 
         // Give user options to append Todo to 
 
-        let projectList = projectModule.listofProjects;
+        let projectList = projectModule.listOfProjects;
 
         projectList.forEach(project => {
             let title = project.title;
@@ -221,7 +221,7 @@ export const domForm = (() => {
 
         helperfunction.appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
     }
-
+    
     // PROJECT FORM
 
     // Runs popUp if 'newProject' button in leftStickyNavBar Clicked
@@ -349,7 +349,6 @@ export const domForm = (() => {
         showingPopUp = false;
     }
     
-
     return  {
         todoPopUp: todoPopUp,
         projectPopUp: projectPopUp,
