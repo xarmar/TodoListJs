@@ -14,7 +14,7 @@ export const pubSubModule = (() => {
     const submitFormInfo = (title: string, description: string, priority?: string, dueDate?: Date, projectTitle?: string) => {
         // if priority and date are NOT null, then it's a todoForm
         if(priority != null && dueDate != null) {
-            PubSub.publish(newTodoFormSubmission, {title, description, priority, dueDate, projectTitle});
+            PubSub.publish(newTodoFormSubmission, {title, priority, dueDate, projectTitle, description});
         }
         // else its a projectForm
         else {
@@ -22,8 +22,8 @@ export const pubSubModule = (() => {
         }
     };
 
-    const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, description, priority, dueDate, projectTitle}) {
-        let newTodo = todoModule.newTodo(title, priority, dueDate, description);
+    const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, {title, priority, dueDate, projectTitle, description}) {
+        let newTodo = todoModule.newTodo(title, priority, dueDate, projectTitle, description);
         projectModule.appendTodoToProject(newTodo, projectTitle);
         domGrid.populateRightGrid(undefined, projectTitle);
     });
