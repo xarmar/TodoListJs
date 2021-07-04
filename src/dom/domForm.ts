@@ -1,6 +1,7 @@
 import { helperfunction } from "../helperFunctions";
 import { projectModule } from "../project";
 import { pubSubModule } from "../pubSub/pubSub";
+import { ProjectType, TodoType } from "../types";
 import { domNavBar } from "./domNavBar";
 
 // Forms DOM maniputalion is here
@@ -10,8 +11,10 @@ export const domForm = (() => {
 
     // TODO FORM
 
-    // Runs popUp if '+' button in NavBar Clicked
-    const todoPopUp = () => {
+    // Runs popUp if '+' button in NavBar Clicked OR when user clicks to 'edit' Todo
+    const todoPopUp = (project?: ProjectType, todo?: TodoType) => {
+        
+        // If a popUp is already open - don't open another popUp
         if (showingPopUp) {
             return
         }
@@ -19,28 +22,39 @@ export const domForm = (() => {
         showingPopUp = true;
         let gridDiv = document.querySelector('#gridDiv');
 
-    // Create PopUpDiv that will append to gridDiv
+        // Create PopUpDiv that will append to gridDiv
         const popUpDiv = document.createElement('div');
         popUpDiv.id = 'popUpDiv';
         gridDiv.appendChild(popUpDiv);
-    // Create Form where user will be prompted for choices
+
+        // Create Form where user will be prompted for choices
         const form = document.createElement('form');
         form.id = 'todoForm';
         form.onsubmit = captureForm;
         popUpDiv.appendChild(form);
 
-    // Set Header at the top of the form
+        // Set Header at the top of the form
         const popUpHeader = document.createElement('p');
         popUpHeader.id = 'popUpHeader';
-        popUpHeader.innerText = 'Add New Todo'
+
+        // If its an edit request
+        if (project && todo) {
+            popUpHeader.innerText = 'Edit Todo'
+        }
+
+        // If it's just a navBar '+' click'
+        else {
+            popUpHeader.innerText = 'Add New Todo'
+        }
+    
         form.appendChild(popUpHeader);
 
-    // Init Div that will contain 'title' and 'description' of todo
+        // Init Div that will contain 'title' and 'description' of todo
         const titleAndDescriptionDiv = document.createElement('div');
         titleAndDescriptionDiv.id = 'titleAndDescriptionDiv';
         form.appendChild(titleAndDescriptionDiv);
 
-    // Ask user for 'title' of Todo
+        // Ask user for 'title' of Todo
         const titleField = document.createElement('p');
         titleField.id = 'titleField';
         titleAndDescriptionDiv.appendChild(titleField);
@@ -51,9 +65,14 @@ export const domForm = (() => {
 
         const titleInput = document.createElement('input');
         titleInput.id = 'titleInput'
-        titleInput.setAttribute('type', 'text');
         titleInput.required = true;
         titleInput.autofocus = true;
+        titleInput.setAttribute('type', 'text');
+       
+        // If its an edit request, set textContent of titleInput to todo.title
+        if (project && todo) {
+            titleInput.innerHTML = todo.title;
+        }
 
         helperfunction.appendMultipleNodesToParent(titleField, titleLabel, titleInput);
 
@@ -72,7 +91,11 @@ export const domForm = (() => {
         descriptionInput.setAttribute('maxlength', '40');
         descriptionInput.setAttribute('rows', '3');
         descriptionInput.setAttribute('placeholder', 'Description is optional...');
-
+        
+        // If its an edit request, set textContent of descriptionINput to todo.description
+        if (project && todo) {
+            descriptionInput.textContent = todo.description;
+        }
 
         helperfunction.appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
 
@@ -115,7 +138,6 @@ export const domForm = (() => {
         mediumPriority.id = 'mediumPriority';
         lowPriority.classList.add('priorityOption');
 
-
         const mediumPriorityImage = document.createElement('img');
         mediumPriorityImage.id = 'mediumPriorityImage';
         mediumPriorityImage.setAttribute('title', 'medium');
@@ -135,6 +157,19 @@ export const domForm = (() => {
         const highPriorityImage = document.createElement('img');
         highPriorityImage.id = 'highPriorityImage';
         highPriorityImage.setAttribute('title', 'high');
+
+        // If its an edit request, set priority of Todo
+        if (project && todo) {
+            if(todo.priority === 'low') {
+                lowPriority.setAttribute('checked', 'checked');
+            }
+            else if (todo.priority === 'medium') {
+                mediumPriority.setAttribute('checked', 'checked');
+            }
+            else if (todo.priority === 'high') {
+                highPriority.setAttribute('checked', 'checked');
+            }
+        }
 
         helperfunction.appendMultipleNodesToParent(highPriorityLabel, highPriority, highPriorityImage);
 
@@ -168,6 +203,11 @@ export const domForm = (() => {
         dueDateInput.setAttribute('min', today);   
         dueDateInput.required = true;
 
+        // If its an edit request, set dueDateInput to todo.dueDate
+        if (project && todo) {
+            dueDateInput.valueAsDate = todo.dueDate;
+        }
+
         helperfunction.appendMultipleNodesToParent(dueDateField, dueDateLabel, dueDateInput);
 
         // Ask user what Project to append the Todo to
@@ -198,12 +238,17 @@ export const domForm = (() => {
 
         let projectList = projectModule.listOfProjects;
 
-        projectList.forEach(project => {
-            let title = project.title;
+        projectList.forEach(proj => {
+            let title = proj.title;
 
             let projectOption = document.createElement('option');
             projectOption.innerText = title
             projectOption.classList.add('projectOption');
+
+            // If its an edit request, set chooseProjectInput to todo.parentProject
+            if (project && todo && title === project.title) {
+                projectOption.setAttribute('selected', 'selected');;
+            }
 
             chooseProjectInput.appendChild(projectOption);
         });
