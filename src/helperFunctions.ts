@@ -45,7 +45,7 @@ export const helperfunction = (() => {
 
     }
 
-    const insertAfter = (newNode, referenceNode) => {
+    const insertAfterReferenceNode = (newNode, referenceNode) => {
         referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     }
 
@@ -54,7 +54,7 @@ export const helperfunction = (() => {
         removeChildNodes: removeChildNodes,
         isBlank: isBlank,
         currentDate: currentDate,
-        insertAfter: insertAfter
+        insertAfter: insertAfterReferenceNode
     }
 
 })();
