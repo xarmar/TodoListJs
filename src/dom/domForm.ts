@@ -69,7 +69,7 @@ export const domForm = (() => {
         const descriptionInput = document.createElement('textarea');
         descriptionInput.id = 'descriptionInput';
         descriptionInput.setAttribute('form', 'form');
-        descriptionInput.setAttribute('maxlength', '75');
+        descriptionInput.setAttribute('maxlength', '40');
         descriptionInput.setAttribute('rows', '3');
         descriptionInput.setAttribute('placeholder', 'Description is optional...');
 
@@ -286,7 +286,7 @@ export const domForm = (() => {
         const descriptionInput = document.createElement('textarea');
         descriptionInput.id = 'descriptionInput';
         descriptionInput.setAttribute('form', 'form');
-        descriptionInput.setAttribute('maxlength', '75');
+        descriptionInput.setAttribute('maxlength', '40');
         descriptionInput.setAttribute('rows', '3');
         descriptionInput.setAttribute('placeholder', 'Description is optional...');
 
