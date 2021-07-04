@@ -226,17 +226,49 @@ body {
                         cursor: pointer;
                     }
                 }
+                .expandedTodo {
+                    opacity: 0;
+                    position: absolute;
+                    visibility: hidden;
+                }
+                .showDetails {
+                    opacity: 100;
+                    position: relative;
+                    visibility: visible;
+                    transition: 0.75s ease-in-out all;
+                }
                 .expandedCell {
                     background-color: antiquewhite;
                     div {
                         font-size: 90%;
                         display: grid;
-                        grid-template-columns: 3fr 1fr 1fr;
-                        grid-template-rows: 1fr 1fr;
-                        justify-items: start;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-rows: 1fr 1fr 1fr;
+                        justify-items: center;
+                        grid-template-areas: 
+                        'description description'
+                        'project project'
+                        'edit delete';
                     }
                     .todoDescription {
-                        // todo
+                        grid-area: description;
+                    }
+                    .parentProject {
+                        grid-area: project;
+                    }
+                    .edit {
+                        grid-area: edit;
+                        &:hover {
+                            text-decoration: underline;
+                            cursor: pointer;
+                        }
+                    }
+                    .deleteTodo {
+                        grid-area: delete;
+                        &:hover {
+                            text-decoration: underline;
+                            cursor: pointer;
+                        }
                     }
                 }
                 .lowPriority {
