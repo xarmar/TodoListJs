@@ -45,7 +45,7 @@ export const domGrid = (() => {
         optionsList.id = 'optionsList'
         todayTomorrowWeekDiv.appendChild(optionsList);
     
-        // populate day options
+        // populate day options with Today, Tomorrow and Week
         const today = document.createElement('li');
         today.id = 'today';
         today.innerText = 'Today';
@@ -66,12 +66,12 @@ export const domGrid = (() => {
         });
         helperfunction.appendMultipleNodesToParent(optionsList, today, tomorrow, week);
     
-        // Init displayProjectsDiv
+        // Init displayProjectsDiv - This is the div where projects will be displayed
         const projectDiv = document.createElement('div');
         projectDiv.id = 'projectDiv';
         stickyLeftDiv.appendChild(projectDiv);
     
-        // add projects options
+        // Gives innerText Projects to the Div with and arrow pointing down
         const projects = document.createElement('p');
         projects.id = 'projects';
         projects.innerText = 'Projects'
@@ -80,7 +80,7 @@ export const domGrid = (() => {
         expandProjectsArrow.innerText = '\u{02C5}';
         helperfunction.appendMultipleNodesToParent(projectDiv, projects, expandProjectsArrow);
     
-        // display all Projects
+        // Init listOfProjectsDiv where an unordered list of projects will be appended
         const listOfProjectsDiv = document.createElement('div');
         listOfProjectsDiv.id = 'listOfProjectsDiv';
         stickyLeftDiv.appendChild(listOfProjectsDiv);
@@ -89,8 +89,10 @@ export const domGrid = (() => {
         projectUnorderedList.id = 'projectUnorderedList'
         listOfProjectsDiv.appendChild(projectUnorderedList);
     
+        // populates side bar with all the projects
         populateSideBarProjectsList();
-    
+        
+        // Add button that user can click to add a new project
         const addProject = document.createElement('p');
         addProject.id = 'addProject';
         addProject.innerHTML = "<span id = 'plus'>+</span> New Project"
@@ -104,6 +106,7 @@ export const domGrid = (() => {
         
         const projectsArray = projectModule.listOfProjects;
 
+        // loops through projects array and populate it alol projects
         projectsArray.forEach(project => {
             let ProjectToBeListed = document.createElement('li');
             ProjectToBeListed.classList.add('project')
@@ -128,23 +131,28 @@ export const domGrid = (() => {
        
         const stickyRightDiv = document.querySelector('#stickyRightDiv');
 
-        // Remove previous Nodes on stickyRightDiv
+        // Remove childNodes of stickyRightDiv
         helperfunction.removeChildNodes(stickyRightDiv);
         
         // Identify requested Project
         let projectTitle;
+
+        // if an event triggered the function, use innerText as projectTitle
         if (event !== undefined) {
             projectTitle = event.target.innerText;
         }
+        // else if it was passed as an argument directly
         else if (titleOfProject) {
             projectTitle = titleOfProject;
         }
 
+        // find project we want to populate the rightDiv with
         let chosenProject: ProjectType = projectModule.findProject(projectTitle);  
         
-        // Loop through Project's children Todo's
+        // get children ( todo [] ) of Project
         let projectChildren = chosenProject.children
 
+        // use children( todos ) to populate table
         populateTableWithTodoArray(projectChildren, stickyRightDiv, projectTitle);
 
     }   
@@ -160,7 +168,7 @@ export const domGrid = (() => {
         // Init weekDate
         let weekDate = new Date;
         
-        // Init array
+        // Init array that will populate Table
         let todosThatWillPopulateTable: TodoType[];
 
         switch (header) {
@@ -181,10 +189,10 @@ export const domGrid = (() => {
 
         const stickyRightDiv = document.querySelector('#stickyRightDiv');
 
-        // Remove previouly attached nodes
+        // Remove childNodes of stickyRightDiv
         helperfunction.removeChildNodes(stickyRightDiv);
 
-        // Populate Table with necessary Todos
+        // Populate Table with Todos based on dueDate - today. tomorrow or week
         populateTableWithTodoArray(todosThatWillPopulateTable, stickyRightDiv, header);
 
         // Close sidebar
@@ -194,16 +202,18 @@ export const domGrid = (() => {
     // Populate Tables
     const populateTableWithTodoArray = (arrayOfTodos: TodoType[], stickyRightDiv: Node, headerOfTable?: string) => {
 
+        // Init div where everything else will be appended
         const projectAndTodosDiv = document.createElement('div');
         projectAndTodosDiv.id = 'projectAndTodosDiv';
         stickyRightDiv.appendChild(projectAndTodosDiv);
 
         // Create Header with chosenProject.title
-        let dayHeader = document.createElement('p');
-        dayHeader.innerText = headerOfTable;
-        dayHeader.id = 'projectHeader';
-        projectAndTodosDiv.appendChild(dayHeader);
+        let projectOrDayHeader = document.createElement('p');
+        projectOrDayHeader.innerText = headerOfTable;
+        projectOrDayHeader.id = 'projectHeader';
+        projectAndTodosDiv.appendChild(projectOrDayHeader);
 
+        // If array is empty. do not display a table
         if(arrayOfTodos.length === 0) {
             let sorryDiv = document.createElement('div');
             projectAndTodosDiv.appendChild(sorryDiv);
@@ -212,12 +222,15 @@ export const domGrid = (() => {
             sorryDiv.appendChild(pElement);
         }
 
+        // if array has any elements, display table
         else {
-            // Label The Todo's that will be appended
+
+            // Init div where table will be appended
             let tableDiv = document.createElement('div');
             tableDiv.id = 'tableDiv';
             projectAndTodosDiv.appendChild(tableDiv);
 
+            // Init table and append to tableDiv. Init table head and append to table
             const table = document.createElement('table');
             tableDiv.appendChild(table);
             const thead = document.createElement('thead');
@@ -225,6 +238,7 @@ export const domGrid = (() => {
             let trForLabel = document.createElement('tr');
             thead.appendChild(trForLabel);
 
+            // Label the table
             let statusLabel = document.createElement('th');
             statusLabel.innerText = 'Status';
 
@@ -240,93 +254,112 @@ export const domGrid = (() => {
 
             helperfunction.appendMultipleNodesToParent(trForLabel, statusLabel, titleLabel, dateLabel, priorityLabel);
 
+            // append table body to table
             const tbody = document.createElement('tbody');
             table.appendChild(tbody);
 
-        // Sort Array by closest dueDate to farthest
-        arrayOfTodos.sort((a,b)=>a.dueDate.getTime()- b.dueDate.getTime());
-        
-        arrayOfTodos.forEach(todo => {
-            let tableRow = document.createElement('tr');
-
-            let completed: boolean = todo.completed
-            let checkOrDeleteTd = document.createElement('td');
-            checkOrDeleteTd.id = 'checkOrDeleteTd';
-
-            let checkAsComplete = document.createElement('p');
-            checkAsComplete.innerText = '\u{2713}';
-            checkAsComplete.classList.add('checkOrDelete');
-
-            checkOrDeleteTd.appendChild(checkAsComplete);
-
-            // let sendToGarbage = document.createElement('p');
-            // sendToGarbage.innerText = '\u{1F5D1}';
-            // sendToGarbage.classList.add('checkOrDelete');
+            // Sort Array by closest dueDate to farthest
+            arrayOfTodos.sort((a,b)=>a.dueDate.getTime()- b.dueDate.getTime());
             
-            // helperfunction.appendMultipleNodesToParent(checkOrDeleteTd, checkAsComplete, sendToGarbage);
-            
+            // Init TodoCount which helpes identify which div to expand when user clicks expandArrow
+            let todoCount = 0;
 
-            let title: string = todo.title;
-            let titleTd = document.createElement('td');
-            titleTd.innerText = title
+            arrayOfTodos.forEach(todo => {
 
-            let dueDate: string = format(todo.dueDate , 'PP');
-            let dueDateTd = document.createElement('td');
-            dueDateTd.innerText = dueDate
+                // create table row for todo
+                let tableRow = document.createElement('tr');
 
-            let priority: string = todo.priority;
-            let priorityTd = document.createElement('td');
-            let priorityImg = document.createElement('img');
-            priorityTd.appendChild(priorityImg);
-            if (priority === 'low') {
-                priorityImg.classList.add('lowPriority')
-            }
-            else if (priority === 'medium') {
-                priorityImg.classList.add('mediumPriority');
-            }
-            else if (priority === 'high') {
-                priorityImg.classList.add('highPriority');
-            }
+                let completed: boolean = todo.completed
+                let checkOrDeleteTd = document.createElement('td');
+                checkOrDeleteTd.id = 'checkOrDeleteTd';
 
-            let detailsTd = document.createElement('td');
-            detailsTd.innerText = '\u{02C5}';
-            detailsTd.classList.add('detailsExpandArrow');
+                let checkAsComplete = document.createElement('p');
+                checkAsComplete.innerText = '\u{2713}';
+                checkAsComplete.classList.add('checkOrDelete');
 
-            helperfunction.appendMultipleNodesToParent(tableRow, checkOrDeleteTd, titleTd, dueDateTd, priorityTd, detailsTd);
+                checkOrDeleteTd.appendChild(checkAsComplete);
 
-            tbody.appendChild(tableRow);
+                // Set Todo title, dueDate, priority that display in table
+                let title: string = todo.title;
+                let titleTd = document.createElement('td');
+                titleTd.innerText = title
 
-            let expandedTodo = document.createElement('tr');
-            expandedTodo.classList.add('expandedTodo');
+                let dueDate: string = format(todo.dueDate , 'PP');
+                let dueDateTd = document.createElement('td');
+                dueDateTd.innerText = dueDate
 
-            let singleCell = document.createElement('td');
-            singleCell.classList.add('expandedCell');
-            singleCell.setAttribute('colspan', '4');
+                let priority: string = todo.priority;
+                let priorityTd = document.createElement('td');
+                let priorityImg = document.createElement('img');
+                priorityTd.appendChild(priorityImg);
+                if (priority === 'low') {
+                    priorityImg.classList.add('lowPriority')
+                }
+                else if (priority === 'medium') {
+                    priorityImg.classList.add('mediumPriority');
+                }
+                else if (priority === 'high') {
+                    priorityImg.classList.add('highPriority');
+                }
 
-            let divInsideCell = document.createElement('div');
-            singleCell.appendChild(divInsideCell);
+                // create expand arrow td
+                let detailsTd = document.createElement('td');
+                detailsTd.innerText = '\u{02C5}';
+                detailsTd.classList.add('detailsExpandArrow');
 
-            let parentProject = document.createElement('p');
-            parentProject.innerHTML= '<strong>Project</strong>: ' + 'something';
+                // Idenfify the expand arrow with a unique number
+                detailsTd.id = `${todoCount}`;
 
-            let edit = document.createElement('p');
-            edit.innerText= 'Edit';
+                // When user clicks an expand arrow
+                detailsTd.addEventListener('click', function(e:any) {
+                    // Identifies which arrow was clicked and showsDetails for that Todo
+                    let arrowClicked:string = e.target.id;
+                    let targetTableRow = document.querySelector(`#expanded${arrowClicked}`);
+                    targetTableRow.classList.toggle('showDetails');
+                });
 
-            let deleteTodo = document.createElement('p');
-            deleteTodo.innerText = 'Delete';
+                helperfunction.appendMultipleNodesToParent(tableRow, checkOrDeleteTd, titleTd, dueDateTd, priorityTd, detailsTd);
 
-            let description = document.createElement('p');
-            description.innerHTML = '<strong>Description</strong>: ' + 'something';
-            description.classList.add('todoDescription');
+                tbody.appendChild(tableRow);
 
-            helperfunction.appendMultipleNodesToParent(divInsideCell, parentProject, edit, deleteTodo, description);
-            helperfunction.appendMultipleNodesToParent(expandedTodo, singleCell);
+                // create table row that gives more details: description, parentProject and option to edit/delete Todos
+                let expandedTodo = document.createElement('tr');
+                expandedTodo.classList.add('expandedTodo');
+                expandedTodo.id = `expanded${todoCount}`;
+                todoCount++;
 
-            helperfunction.insertAfter(expandedTodo, tableRow);
+                let singleCell = document.createElement('td');
+                singleCell.classList.add('expandedCell');
+                singleCell.setAttribute('colspan', '4');
 
-        })
+                let divInsideCell = document.createElement('div');
+                singleCell.appendChild(divInsideCell);
+
+                let description = document.createElement('p');
+                description.innerHTML = '<strong>Description</strong>: ' + 'something';
+                description.classList.add('todoDescription');
+
+                let parentProject = document.createElement('p');
+                parentProject.innerHTML= '<strong>Project</strong>: ' + 'something';
+                parentProject.classList.add('parentProject');
+
+                let edit = document.createElement('p');
+                edit.innerText= 'Edit';
+                edit.classList.add('edit');
+
+                let deleteTodo = document.createElement('p');
+                deleteTodo.innerText = 'Delete';
+                deleteTodo.classList.add('deleteTodo');
+
+
+                helperfunction.appendMultipleNodesToParent(divInsideCell, description, parentProject, edit, deleteTodo);
+                helperfunction.appendMultipleNodesToParent(expandedTodo, singleCell);
+
+                helperfunction.insertAfter(expandedTodo, tableRow);
+
+            })
+        }
     }
-}
 
     return  {
         generateGrid: generateGrid,
