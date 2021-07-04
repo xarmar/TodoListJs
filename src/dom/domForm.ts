@@ -101,6 +101,7 @@ export const domForm = (() => {
 
         const lowPriorityImage = document.createElement('img');
         lowPriorityImage.id = 'lowPriorityImage';
+        lowPriorityImage.setAttribute('title', 'low');
 
         helperfunction.appendMultipleNodesToParent(lowPriorityLabel, lowPriority, lowPriorityImage);
 
@@ -117,6 +118,7 @@ export const domForm = (() => {
 
         const mediumPriorityImage = document.createElement('img');
         mediumPriorityImage.id = 'mediumPriorityImage';
+        mediumPriorityImage.setAttribute('title', 'medium');
 
         helperfunction.appendMultipleNodesToParent(mediumPriorityLabel, mediumPriority, mediumPriorityImage);
 
@@ -132,7 +134,8 @@ export const domForm = (() => {
 
         const highPriorityImage = document.createElement('img');
         highPriorityImage.id = 'highPriorityImage';
-        
+        highPriorityImage.setAttribute('title', 'high');
+
         helperfunction.appendMultipleNodesToParent(highPriorityLabel, highPriority, highPriorityImage);
 
         // Append everything to a 'priorityDiv'
