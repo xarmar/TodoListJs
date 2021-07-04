@@ -29,7 +29,9 @@ export const domNavBar = (() => {
         const expander = document.createElement('p');
         expander.innerText = '☰';
         expander.classList.add('navOption');
-        expander.addEventListener('click', toggleLeftStickyNavBar);
+        expander.addEventListener('click', function() {
+            toggleLeftStickyNavBar();
+        });
         expander.setAttribute('title', 'Projects');
         
         leftHeaderDiv.appendChild(expander);
@@ -39,7 +41,9 @@ export const domNavBar = (() => {
         addTodo.innerText = '+';
         addTodo.classList.add('navOption');
         addTodo.setAttribute('title', 'Add Todo');
-        addTodo.addEventListener('click', domForm.todoPopUp);
+        addTodo.addEventListener('click', function() {
+            domForm.todoPopUp();
+        });
         
         const history = document.createElement('p');
         history.innerText = '\u{1F56E}';
