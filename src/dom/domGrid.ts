@@ -218,7 +218,7 @@ export const domGrid = (() => {
             let sorryDiv = document.createElement('div');
             projectAndTodosDiv.appendChild(sorryDiv);
             let pElement = document.createElement('p');
-            pElement.innerText = 'Nothing to Show';
+            pElement.innerText = 'Nothing to show...';
             sorryDiv.appendChild(pElement);
         }
 
@@ -331,21 +331,28 @@ export const domGrid = (() => {
                 let singleCell = document.createElement('td');
                 singleCell.classList.add('expandedCell');
                 singleCell.setAttribute('colspan', '4');
+                singleCell.setAttribute('data-project', todo.parentProject);
+                singleCell.setAttribute('data-todotitle', todo.title);
 
                 let divInsideCell = document.createElement('div');
                 singleCell.appendChild(divInsideCell);
 
                 let description = document.createElement('p');
-                description.innerHTML = '<strong>Description</strong>: ' + 'something';
+                description.innerHTML = '<strong>Description</strong>: ' + todo.description;
                 description.classList.add('todoDescription');
 
                 let parentProject = document.createElement('p');
-                parentProject.innerHTML= '<strong>Project</strong>: ' + 'something';
+                parentProject.innerHTML= '<strong>Project</strong>: ' + todo.parentProject;
                 parentProject.classList.add('parentProject');
 
                 let edit = document.createElement('p');
                 edit.innerText= 'Edit';
                 edit.classList.add('edit');
+                edit.addEventListener('click', function(event:any) {
+                    let project = event.target.offsetParent.dataset.project;
+                    let title = event.target.offsetParent.dataset.todotitle;
+                    todoModule.editTodo(project, title);
+                });
 
                 let deleteTodo = document.createElement('p');
                 deleteTodo.innerText = 'Delete';
