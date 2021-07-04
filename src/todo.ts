@@ -1,5 +1,6 @@
 import { Priority, TodoType, ProjectType } from "./types";
 import { projectModule } from "./project";
+import { domForm } from "./dom/domForm";
 import { format } from 'date-fns';
 import * as moment from "moment";
 
@@ -15,11 +16,12 @@ export const todoModule = (() => {
         notes: string[];
         completed: boolean;
         
-        constructor(title: string, priority: Priority, dueDate: Date, description?: string) {
+        constructor(title: string, priority: Priority, dueDate: Date, parentProject?: string,  description?: string) {
             this.title = title;
             this.priority = priority;
-            this.description = description;
             this.dueDate = dueDate;
+            this.parentProject = parentProject
+            this.description = description;
             this.notes = null;
             this.completed = false;
         }
@@ -49,8 +51,8 @@ export const todoModule = (() => {
         }
     }
     
-    const newTodo = (title: string, priority: Priority, dueDate: Date, description?: string) => {
-        let newTodoObject = new Todo(title, priority, dueDate, description);
+    const newTodo = (title: string, priority: Priority, dueDate: Date, parentProject: string, description?: string) => {
+        let newTodoObject = new Todo(title, priority, dueDate, parentProject, description);
         return newTodoObject;
     }
 
@@ -80,10 +82,37 @@ export const todoModule = (() => {
         }
         return todosThatWillPopulateTableArray
     }
+
+    const editTodo = (projectTitle: string, todoTitle: string) => {
+       
+        // Identify Project
+        let targetProject: ProjectType;
+        let projectsList = projectModule.listOfProjects;
+
+        projectsList.forEach(project => {
+            if(project.title === projectTitle) {
+                targetProject = project
+            }
+        });
+
+        // Identify Todo
+        let targetTodo: TodoType;
+        let todosList = targetProject.children;
+
+        todosList.forEach(todo => {
+            if(todo.title === todoTitle) {
+                targetTodo = todo;
+            }
+        });
+
+        domForm.todoPopUp(targetProject, targetTodo);
+
+    }
     
     return {
         newTodo: newTodo,
-        generateArrayOfTodosBasedOnDate: generateArrayOfTodosBasedOnDate
+        generateArrayOfTodosBasedOnDate: generateArrayOfTodosBasedOnDate,
+        editTodo: editTodo
     }
     
     })();
