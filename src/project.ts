@@ -22,15 +22,11 @@ export const projectModule = (() => {
         }
     }
 
-    const listOfProjects: Project[] = []
+    const listOfProjects: Project[] = [];
 
     const newProject = (title: string, description?: string) => {
         let newObject = new Project(title, description);
         return newObject;
-    }
-    
-    const addTodoToProject = (todo: TodoType, project: Project) => {
-        project.children.push(todo);
     }
 
     const appendTodoToProject = (todo: TodoType, projectTitle: string) => {
@@ -64,7 +60,6 @@ export const projectModule = (() => {
     return {
         listOfProjects: listOfProjects,
         newProject: newProject,
-        addTodoToProject : addTodoToProject,
         removeTodoFromProject : removeTodoFromProject,
         appendTodoToProject: appendTodoToProject,
         findProject: findProject
