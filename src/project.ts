@@ -41,6 +41,16 @@ export const projectModule = (() => {
         });
     }
 
+    const removeTodoFromProject = (todo: TodoType, parentProjectTitle: string) => {
+        
+        let targetProject: ProjectType = findProject(parentProjectTitle);
+        let allTodosInTargetProject: TodoType[] = targetProject.children;
+
+        let indexOfTodoToRemove = allTodosInTargetProject.indexOf(todo);
+
+        allTodosInTargetProject.splice(indexOfTodoToRemove, 1);
+    }
+
     const findProject = (projectTitle: string) => {
         let projectToReturn;
         listOfProjects.forEach(project => {
@@ -55,6 +65,7 @@ export const projectModule = (() => {
         listOfProjects: listOfProjects,
         newProject: newProject,
         addTodoToProject : addTodoToProject,
+        removeTodoFromProject : removeTodoFromProject,
         appendTodoToProject: appendTodoToProject,
         findProject: findProject
     }
