@@ -251,7 +251,6 @@ export const domGrid = (() => {
             let priorityLabel = document.createElement('th');
             priorityLabel.innerText = 'Priority';
 
-
             helperfunction.appendMultipleNodesToParent(trForLabel, statusLabel, titleLabel, dateLabel, priorityLabel);
 
             // append table body to table
@@ -269,15 +268,27 @@ export const domGrid = (() => {
                 // create table row for todo
                 let tableRow = document.createElement('tr');
 
-                let completed: boolean = todo.completed
                 let checkOrDeleteTd = document.createElement('td');
                 checkOrDeleteTd.id = 'checkOrDeleteTd';
 
+
                 let checkAsComplete = document.createElement('p');
-                checkAsComplete.innerText = '\u{2713}';
                 checkAsComplete.classList.add('checkOrDelete');
 
+                let completed: boolean = todo.completed
                 checkOrDeleteTd.appendChild(checkAsComplete);
+
+                if (completed) {
+                    checkAsComplete.innerText = 'Completed';
+                    checkAsComplete.setAttribute('title', 'Click to mark as Todo.')
+                }
+                else {
+                    checkAsComplete.innerText = '\u{2713}'
+                    checkAsComplete.setAttribute('title', 'Click to mark as completed.')
+                    checkAsComplete.addEventListener('click', function(event) {
+                        todoModule.checkTodoAsComplete(todo, event);  
+                    });
+                }
 
                 // Set Todo title, dueDate, priority that display in table
                 let title: string = todo.title;
@@ -312,10 +323,22 @@ export const domGrid = (() => {
 
                 // When user clicks an expand arrow
                 detailsTd.addEventListener('click', function(e:any) {
-                    // Identifies which arrow was clicked and showsDetails for that Todo
+
+                    // Identifies which arrow was clicked
                     let arrowClicked:string = e.target.id;
+
+                    // expand Todo that was clicked on
                     let targetTableRow = document.querySelector(`#expanded${arrowClicked}`);
                     targetTableRow.classList.toggle('showDetails');
+
+                    // if any other Todo is expanded close it
+                    let allExpandedTodos = document.querySelectorAll('.expandedTodo');
+                    allExpandedTodos.forEach(expandedTodo => {
+                        if (expandedTodo.id !== `expanded${arrowClicked}`) {
+                        expandedTodo.classList.remove('showDetails');
+                        }
+                    });
+                    
                 });
 
                 helperfunction.appendMultipleNodesToParent(tableRow, checkOrDeleteTd, titleTd, dueDateTd, priorityTd, detailsTd);
@@ -368,12 +391,21 @@ export const domGrid = (() => {
         }
     }
 
+    // Populate Todo History Table
+    const populateHistoryTable = () => {
+        let stickyRightDiv = document.querySelector('#stickyRightDiv');
+            helperfunction.removeChildNodes(stickyRightDiv);
+            domGrid.populateTableWithTodoArray(todoModule.completedTodosList, stickyRightDiv, 'Completed Todos');
+    }
+
     return  {
         generateGrid: generateGrid,
         populateLeftGrid: populateLeftGrid,
         populateSideBarProjectsList: populateSideBarProjectsList,
+        populateTableWithTodoArray: populateTableWithTodoArray,
         updateSideBarProjects: updateSideBarProjects,
-        populateRightGrid: populateRightGrid
+        populateRightGrid: populateRightGrid,
+        populateHistoryTable: populateHistoryTable
     }
     
     })();
