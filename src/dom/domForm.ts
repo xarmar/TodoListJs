@@ -2,8 +2,8 @@ import { intlFormat } from "date-fns";
 import { helperfunction } from "../helperFunctions";
 import { projectModule } from "../project";
 import { pubSubModule } from "../pubSub/pubSub";
-import { todoModule } from "../todo";
-import { ProjectType, TodoType } from "../types";
+import { Todo, todoModule } from "../todo";
+import { ProjectType } from "../types";
 import { domNavBar } from "./domNavBar";
 
 // Forms DOM maniputalion is here
@@ -14,7 +14,7 @@ export const domForm = (() => {
     // TODO FORM
 
     // Runs popUp if '+' button in NavBar Clicked OR when user clicks to 'edit' Todo
-    const todoPopUp = (project?: ProjectType, todo?: TodoType) => {
+    const todoPopUp = (project?: ProjectType, todo?: Todo) => {
         
         // If a popUp is already open - don't open another popUp
         if (showingPopUp) {
@@ -269,7 +269,8 @@ export const domForm = (() => {
         addButton.innerText = 'Add';
 
         const cancelButton = document.createElement('button');
-        cancelButton.addEventListener('click', function() {
+        cancelButton.addEventListener('click', function(event) {
+            event.preventDefault();
             closePopUp();
         });
         cancelButton.id = 'cancelButton';
@@ -341,7 +342,8 @@ export const domForm = (() => {
         addButton.innerText = 'Add';
 
         const cancelButton = document.createElement('button');
-        cancelButton.addEventListener('click', function() {
+        cancelButton.addEventListener('click', function(event) {
+            event.preventDefault();
             closePopUp();
             domNavBar.toggleLeftStickyNavBar();;
         });

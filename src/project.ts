@@ -1,10 +1,11 @@
-import { Priority, TodoType, ProjectType } from "./types";
+import { Priority, ProjectType } from "./types";
+import { Todo } from "./todo";
 
 export const projectModule = (() => {
 
     class Project {
         title: string;
-        children: TodoType[];
+        children: Todo[];
         
         constructor(title: string) {
             this.title = title;
@@ -24,7 +25,7 @@ export const projectModule = (() => {
         return newProj;
     }
 
-    const appendTodoToProject = (todo: TodoType, projectTitle: string) => {
+    const appendTodoToProject = (todo: Todo, projectTitle: string) => {
         listOfProjects.forEach(project => {
             if(project.title === projectTitle) {
                 project.children.push(todo);
@@ -32,10 +33,10 @@ export const projectModule = (() => {
         });
     }
 
-    const removeTodoFromProject = (todo: TodoType, parentProjectTitle: string) => {
+    const removeTodoFromProject = (todo: Todo, parentProjectTitle: string) => {
         
         let targetProject: ProjectType = findProject(parentProjectTitle);
-        let allTodosInTargetProject: TodoType[] = targetProject.children;
+        let allTodosInTargetProject: Todo[] = targetProject.children;
 
         let indexOfTodoToRemove = allTodosInTargetProject.indexOf(todo);
 

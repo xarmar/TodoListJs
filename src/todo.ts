@@ -1,58 +1,57 @@
-import { Priority, TodoType, ProjectType } from "./types";
+import { Priority, ProjectType } from "./types";
 import { projectModule } from "./project";
 import { domForm } from "./dom/domForm";
 import { format } from 'date-fns';
 import * as moment from "moment";
-import { domGrid } from "./dom/domGrid";
+
+export class Todo {
+    parentProject: string;
+    priority: Priority;
+    title: string;
+    description: string;
+    dueDate: Date;
+    notes: string[];
+    completed: boolean;
+    
+    constructor(title: string, priority: Priority, dueDate: Date, parentProject?: string,  description?: string) {
+        this.title = title;
+        this.priority = priority;
+        this.dueDate = dueDate;
+        this.parentProject = parentProject
+        this.description = description;
+        this.notes = null;
+        this.completed = false;
+    }
+
+    changeTitle (newTitle: string) {
+        this.title = newTitle;
+    }
+
+    changePriority (newPriority: Priority) {
+        this.priority = newPriority;
+    }
+
+    changeDescription (newDescription: string) {
+        this.description = newDescription;
+    }
+    
+    changeDueDate (newDueDate: Date) {
+        this.dueDate = newDueDate;
+    }
+
+    addNewNote (noteToAdd: string) {
+        this.notes.push(noteToAdd);
+    }
+
+    toggleCompleteStatus() {
+        this.completed = !this.completed;
+    }
+}
 
 // todoModule
 export const todoModule = (() => {
-    
-    class Todo {
-        parentProject: string;
-        priority: Priority;
-        title: string;
-        description: string;
-        dueDate: Date;
-        notes: string[];
-        completed: boolean;
-        
-        constructor(title: string, priority: Priority, dueDate: Date, parentProject?: string,  description?: string) {
-            this.title = title;
-            this.priority = priority;
-            this.dueDate = dueDate;
-            this.parentProject = parentProject
-            this.description = description;
-            this.notes = null;
-            this.completed = false;
-        }
-    
-        changeTitle (newTitle: string) {
-            this.title = newTitle;
-        }
-    
-        changePriority (newPriority: Priority) {
-            this.priority = newPriority;
-        }
-    
-        changeDescription (newDescription: string) {
-            this.description = newDescription;
-        }
-        
-        changeDueDate (newDueDate: Date) {
-            this.dueDate = newDueDate;
-        }
-    
-        addNewNote (noteToAdd: string) {
-            this.notes.push(noteToAdd);
-        }
-    
-        toggleCompleteStatus() {
-            this.completed = !this.completed;
-        }
-    }
 
-    let completedTodosList: TodoType[] = [];
+    let completedTodosList: Todo[] = [];
    
     const newTodo = (title: string, priority: Priority, dueDate: Date, parentProject: string, description?: string) => {
         let newTodoObject = new Todo(title, priority, dueDate, parentProject, description);
@@ -60,7 +59,7 @@ export const todoModule = (() => {
     }
 
     const generateArrayOfTodosBasedOnDate = (date: Date, weekDate?: Date) => {
-        let todosThatWillPopulateTableArray: TodoType[] = [];
+        let todosThatWillPopulateTableArray: Todo[] = [];
 
         if (!weekDate) {
             projectModule.listOfProjects.forEach(project => {
@@ -99,7 +98,7 @@ export const todoModule = (() => {
         });
 
         // Identify Todo
-        let targetTodo: TodoType;
+        let targetTodo: Todo;
         let todosList = targetProject.children;
 
         todosList.forEach(todo => {
@@ -112,7 +111,7 @@ export const todoModule = (() => {
 
     }
 
-    const markTodoAsCompleted = (todo: TodoType, event) => {  
+    const markTodoAsCompleted = (todo: Todo, event) => {  
         // Make todo status as completed
         todo.completed = true;
         

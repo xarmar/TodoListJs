@@ -1,7 +1,7 @@
-import { Priority, TodoType, ProjectType } from "../types";
+import { Priority, ProjectType } from "../types";
 import { format } from 'date-fns'
 import { projectModule } from "../project";
-import { todoModule } from "../todo";
+import { Todo, todoModule } from "../todo";
 import { helperfunction } from "../helperFunctions";
 import { domForm } from "./domForm";
 import { domNavBar } from "./domNavBar";
@@ -169,7 +169,7 @@ export const domGrid = (() => {
         let weekDate = new Date;
         
         // Init array that will populate Table
-        let todosThatWillPopulateTable: TodoType[];
+        let todosThatWillPopulateTable: Todo[];
 
         switch (header) {
             case 'Today':
@@ -200,7 +200,7 @@ export const domGrid = (() => {
     }   
     
     // Populate Tables
-    const populateTableWithTodoArray = (arrayOfTodos: TodoType[], stickyRightDiv: Node, headerOfTable?: string) => {
+    const populateTableWithTodoArray = (arrayOfTodos: Todo[], stickyRightDiv: Node, headerOfTable?: string) => {
 
         // Init div where everything else will be appended
         const projectAndTodosDiv = document.createElement('div');
