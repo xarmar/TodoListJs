@@ -220,6 +220,11 @@ body {
                     flex-direction: row;
                     justify-content: space-evenly;
                 }
+                .checkOrDelete {
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
                 .detailsExpandArrow {
                     background-color: pink;
                     &:hover {
