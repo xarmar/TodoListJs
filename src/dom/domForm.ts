@@ -1,6 +1,8 @@
+import { intlFormat } from "date-fns";
 import { helperfunction } from "../helperFunctions";
 import { projectModule } from "../project";
 import { pubSubModule } from "../pubSub/pubSub";
+import { todoModule } from "../todo";
 import { ProjectType, TodoType } from "../types";
 import { domNavBar } from "./domNavBar";
 
@@ -39,11 +41,15 @@ export const domForm = (() => {
 
         // If its an edit request
         if (project && todo) {
+            form.setAttribute('data-type', 'edit');
+            form.setAttribute('data-project', project.title);
+            form.setAttribute('data-todo', todo.title);
             popUpHeader.innerText = 'Edit Todo'
         }
 
         // If it's just a navBar '+' click'
         else {
+            form.setAttribute('data-type', 'new')
             popUpHeader.innerText = 'Add New Todo'
         }
     
@@ -71,7 +77,7 @@ export const domForm = (() => {
        
         // If its an edit request, set textContent of titleInput to todo.title
         if (project && todo) {
-            titleInput.innerHTML = todo.title;
+            titleInput.value = todo.title;
         }
 
         helperfunction.appendMultipleNodesToParent(titleField, titleLabel, titleInput);
@@ -94,7 +100,7 @@ export const domForm = (() => {
         
         // If its an edit request, set textContent of descriptionINput to todo.description
         if (project && todo) {
-            descriptionInput.textContent = todo.description;
+            descriptionInput.innerText = todo.description;
         }
 
         helperfunction.appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
@@ -263,7 +269,9 @@ export const domForm = (() => {
         addButton.innerText = 'Add';
 
         const cancelButton = document.createElement('button');
-        cancelButton.addEventListener('click', closePopUp);
+        cancelButton.addEventListener('click', function() {
+            closePopUp();
+        });
         cancelButton.id = 'cancelButton';
         cancelButton.innerText = 'Cancel';
 
@@ -291,6 +299,7 @@ export const domForm = (() => {
         const form = document.createElement('form');
         form.id = 'projectForm';
         form.onsubmit = captureForm;
+        form.setAttribute('data-type', 'project')
         popUpDiv.appendChild(form);
 
     // Set Header at the top of the form
@@ -346,7 +355,6 @@ export const domForm = (() => {
         form.appendChild(buttonsDiv);
 
         const addButton = document.createElement('button');
-        addButton.addEventListener('click', captureForm);
         addButton.id = 'addButton';
         addButton.innerText = 'Add';
 
@@ -371,20 +379,30 @@ export const domForm = (() => {
         // get form data
         let title:string = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
         let description:string = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
+        let type: string = event.srcElement.dataset.type;
+        
 
         // Prevents 'title' being blank
         if (helperfunction.isBlank(title)) {
             return
         }
 
+        // If it's a todoForm, capture more fields
         if (idOfForm === 'todoForm') {
             var priority:string = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
             let date: string = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
             var dueDate: Date = new Date(date);
             var projectTitle:string = (<HTMLSelectElement>document.querySelector('select#chooseProjectInput')).value;
+
+            // if user if editing a Todo, grab name of project and todo
+            if(type === 'edit') {
+                var projectToBeEditedTitle = event.srcElement.dataset.project;
+                var todoToBeEditedTitle = event.srcElement.dataset.todo;
+            }
         }
 
-         pubSubModule.submitFormInfo(title, description, priority, dueDate, projectTitle);
+        // Submit form info. Type can be 'project' for projects AND 'new' or 'edit' for Todos
+        pubSubModule.submitFormInfo(title, description, priority, dueDate, projectTitle, type, projectToBeEditedTitle, todoToBeEditedTitle);
 
         closePopUp();
         domNavBar.closeLeftStickyNavBar();
