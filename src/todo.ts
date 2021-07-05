@@ -3,6 +3,7 @@ import { projectModule } from "./project";
 import { domForm } from "./dom/domForm";
 import { format } from 'date-fns';
 import * as moment from "moment";
+import { domGrid } from "./dom/domGrid";
 
 // todoModule
 export const todoModule = (() => {
@@ -50,7 +51,9 @@ export const todoModule = (() => {
             this.completed = !this.completed;
         }
     }
-    
+
+    let completedTodosList: TodoType[] = [];
+   
     const newTodo = (title: string, priority: Priority, dueDate: Date, parentProject: string, description?: string) => {
         let newTodoObject = new Todo(title, priority, dueDate, parentProject, description);
         return newTodoObject;
@@ -108,11 +111,27 @@ export const todoModule = (() => {
         domForm.todoPopUp(targetProject, targetTodo);
 
     }
+
+    const markTodoAsCompleted = (todo: TodoType, event) => {  
+        // Make todo status as completed
+        todo.completed = true;
+        
+        // Add Todo to a list of completed Todos
+        completedTodosList.push(todo);
+
+        // Remove Todo from Table Row and parentProject.
+        let todoRow: any = event.path[2];
+        todoRow.remove();
+
+        projectModule.removeTodoFromProject(todo, todo.parentProject);
+    }
     
     return {
+        completedTodosList: completedTodosList,
         newTodo: newTodo,
         generateArrayOfTodosBasedOnDate: generateArrayOfTodosBasedOnDate,
-        editTodo: editTodo
+        editTodo: editTodo,
+        markTodoAsCompleted: markTodoAsCompleted
     }
     
     })();
