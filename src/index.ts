@@ -1,31 +1,37 @@
 require ('./style.scss');
-
 import { todoModule } from "./todo";
 import { projectModule } from "./project";
-import { dom } from "./domGenerator";
-import { helperfunction } from "./helperFunctions";
+import { domNavBar } from "./dom/domNavBar";
+import { domGrid } from "./dom/domGrid";
 
-let shopppingProject = projectModule.newProject('Shopping', 'My shopping list');
-projectModule.listofProjects.push(shopppingProject);
+let shopppingProject = projectModule.newProject('Shopping');
+projectModule.listOfProjects.push(shopppingProject);
 
 let exampleDate = new Date;
+let oneMoreWeek = new Date;
+oneMoreWeek.setDate(oneMoreWeek.getDate() + 6);
+
+let bananas = todoModule.newTodo('Bananas', "low", exampleDate, 'Shopping', 'Must be ripe and ready to eat.');
+projectModule.appendTodoToProject(bananas, 'Shopping');
+let strawberries = todoModule.newTodo('Strawberries', "medium", oneMoreWeek, 'Shopping', 'Needs to be biological.');
+projectModule.appendTodoToProject(strawberries, 'Shopping');
+let icreCream = todoModule.newTodo('Ice cream', "high", exampleDate, 'Shopping', 'Vanilla or Chocolate');
+projectModule.appendTodoToProject(icreCream, 'Shopping');
+'Movies I want to watch'
+let moviesProject = projectModule.newProject('Movies To Watch', );
+projectModule.listOfProjects.push(moviesProject);
 
 
-let todo = todoModule.newTodo('buy bananas', "low", exampleDate);
-projectModule.appendTodoToProject(todo, 'Shopping');
-let todo2 = todoModule.newTodo('buy strawberries', "medium", exampleDate);
-projectModule.appendTodoToProject(todo2, 'Shopping');
-let todo3 = todoModule.newTodo('buy tomatoes', "high", exampleDate);
-projectModule.appendTodoToProject(todo3, 'Shopping');
+let rambo = todoModule.newTodo('Rambo', "low", exampleDate, 'Movies To Watch', 'Love Stallonne. Must watch.');
+projectModule.appendTodoToProject(rambo, 'Movies To Watch');
+let terminator = todoModule.newTodo('Terminator', "high", oneMoreWeek, 'Movies To Watch', "Haven't watched yet");
+projectModule.appendTodoToProject(terminator, 'Movies To Watch');
+let theyLive = todoModule.newTodo('They Live', "medium", exampleDate, 'Movies To Watch', 'I just ran out of bubblegum :)');
+projectModule.appendTodoToProject(theyLive, 'Movies To Watch');
 
-
-let studyProject = projectModule.newProject('To Study', 'My topics to study later');
-projectModule.listofProjects.push(studyProject);
-
-
-dom.generateNavBar();
-dom.generateGrid();
-dom.populateLeftGrid();
+domNavBar.generateNavBar();
+domGrid.generateGrid();
+domGrid.populateLeftGrid();
 
 
 

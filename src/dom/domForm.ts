@@ -331,24 +331,6 @@ export const domForm = (() => {
 
         helperfunction.appendMultipleNodesToParent(titleField, titleLabel, titleInput);
 
-        // Ask user for 'description' of Project
-        const descriptionField = document.createElement('p');
-        descriptionField.id = 'descriptionField';
-        titleAndDescriptionDiv.appendChild(descriptionField);
-
-        const descriptionLabel = document.createElement('label');
-        descriptionLabel.innerText = 'Description : ';
-        descriptionLabel.setAttribute('for', 'descriptionInput');
-
-        const descriptionInput = document.createElement('textarea');
-        descriptionInput.id = 'descriptionInput';
-        descriptionInput.setAttribute('form', 'form');
-        descriptionInput.setAttribute('maxlength', '40');
-        descriptionInput.setAttribute('rows', '3');
-        descriptionInput.setAttribute('placeholder', 'Description is optional...');
-
-        helperfunction.appendMultipleNodesToParent(descriptionField, descriptionLabel, descriptionInput);
-
         // Add Buttons
         const buttonsDiv = document.createElement('div');
         buttonsDiv.id = 'buttonsDiv';
@@ -378,7 +360,6 @@ export const domForm = (() => {
 
         // get form data
         let title:string = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
-        let description:string = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
         let type: string = event.srcElement.dataset.type;
         
 
@@ -389,6 +370,7 @@ export const domForm = (() => {
 
         // If it's a todoForm, capture more fields
         if (idOfForm === 'todoForm') {
+            var description:string = (<HTMLTextAreaElement>document.querySelector('textarea#descriptionInput')).value;
             var priority:string = (<HTMLInputElement>document.querySelector('input[name=priorityLevel]:checked')).value;
             let date: string = (<HTMLInputElement>document.querySelector('input#dueDateInput')).value;
             var dueDate: Date = new Date(date);

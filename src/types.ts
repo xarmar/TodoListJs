@@ -13,6 +13,5 @@ export type TodoType = {
 
 export type ProjectType = {
     title: string;
-    description: string;
     children: TodoType[];
 }

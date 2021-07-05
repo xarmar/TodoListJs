@@ -4,12 +4,10 @@ export const projectModule = (() => {
 
     class Project {
         title: string;
-        description: string;
         children: TodoType[];
         
-        constructor(title: string, description?: string) {
+        constructor(title: string) {
             this.title = title;
-            this.description = description;
             this.children = [];
         }
     
@@ -17,16 +15,13 @@ export const projectModule = (() => {
             this.title = newTitle;
         }
     
-        changeDescription (newDescription: string) {
-            this.description = newDescription;
-        }
     }
 
     const listOfProjects: Project[] = [];
 
-    const newProject = (title: string, description?: string) => {
-        let newObject = new Project(title, description);
-        return newObject;
+    const newProject = (title: string) => {
+        let newProj = new Project(title);
+        return newProj;
     }
 
     const appendTodoToProject = (todo: TodoType, projectTitle: string) => {

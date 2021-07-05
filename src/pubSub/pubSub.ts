@@ -76,8 +76,8 @@ export const pubSubModule = (() => {
         domGrid.populateRightGrid(undefined, projectTitle);
     });
     
-    const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title, description}) {
-        let newProject = projectModule.newProject(title, description);
+    const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title}) {
+        let newProject = projectModule.newProject(title);
         projectModule.listOfProjects.push(newProject);
         domGrid.updateSideBarProjects();
     });
