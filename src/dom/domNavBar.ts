@@ -1,5 +1,7 @@
 import { domForm } from "./domForm";
 import { helperfunction } from "../helperFunctions";
+import { domGrid } from "./domGrid";
+import { todoModule } from "../todo";
 
 // Navbar and LeftStickyNavBar DOM maniputalion is here
 export const domNavBar = (() => {
@@ -49,6 +51,9 @@ export const domNavBar = (() => {
         history.innerText = '\u{1F56E}';
         history.classList.add('navOption');
         history.setAttribute('title', 'History');
+        history.addEventListener('click', function() {
+            domGrid.populateHistoryTable();
+        });
 
         
         helperfunction.appendMultipleNodesToParent(rightHeaderDiv, addTodo, history);
