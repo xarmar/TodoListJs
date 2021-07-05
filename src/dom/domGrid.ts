@@ -286,7 +286,7 @@ export const domGrid = (() => {
                     checkAsComplete.innerText = '\u{2713}'
                     checkAsComplete.setAttribute('title', 'Click to mark as completed.')
                     checkAsComplete.addEventListener('click', function(event) {
-                        todoModule.checkTodoAsComplete(todo, event);  
+                        todoModule.markTodoAsCompleted(todo, event);  
                     });
                 }
 
