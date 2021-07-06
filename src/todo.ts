@@ -58,33 +58,6 @@ export const todoModule = (() => {
         return newTodoObject;
     }
 
-    const generateArrayOfTodosBasedOnDate = (date: Date, weekDate?: Date) => {
-        let todosThatWillPopulateTableArray: Todo[] = [];
-
-        if (!weekDate) {
-            listOfProjects.forEach(project => {
-                project.children.forEach(todo => {
-                    if(format(todo.dueDate, 'PP') === format(date, 'PP')) {
-                        todosThatWillPopulateTableArray.push(todo);
-                    }
-                });
-            });
-        }
-        else {
-            listOfProjects.forEach(project => {
-                project.children.forEach(todo => {
-                    let formattedTodoDate = moment(todo.dueDate).format('YYYY-MM-DD');
-                    let formattedDate = moment(date).format('YYYY-MM-DD');
-                    let formattedWeekDate = moment(weekDate).format('YYYY-MM-DD');
-                    if(moment(formattedTodoDate).isBetween(formattedDate, formattedWeekDate, undefined, '[]')) {
-                        todosThatWillPopulateTableArray.push(todo);
-                    }
-                }); 
-            });
-        }
-        return todosThatWillPopulateTableArray
-    }
-
     const editTodo = (projectTitle: string, todoTitle: string) => {
        
         // Identify Project
@@ -139,6 +112,33 @@ export const todoModule = (() => {
 
     }
 
+    const generateArrayOfTodosBasedOnDate = (date: Date, weekDate?: Date) => {
+        let todosThatWillPopulateTableArray: Todo[] = [];
+
+        if (!weekDate) {
+            listOfProjects.forEach(project => {
+                project.children.forEach(todo => {
+                    if(format(todo.dueDate, 'PP') === format(date, 'PP')) {
+                        todosThatWillPopulateTableArray.push(todo);
+                    }
+                });
+            });
+        }
+        else {
+            listOfProjects.forEach(project => {
+                project.children.forEach(todo => {
+                    let formattedTodoDate = moment(todo.dueDate).format('YYYY-MM-DD');
+                    let formattedDate = moment(date).format('YYYY-MM-DD');
+                    let formattedWeekDate = moment(weekDate).format('YYYY-MM-DD');
+                    if(moment(formattedTodoDate).isBetween(formattedDate, formattedWeekDate, undefined, '[]')) {
+                        todosThatWillPopulateTableArray.push(todo);
+                    }
+                }); 
+            });
+        }
+        return todosThatWillPopulateTableArray
+    }
+
     const getTodoByTitle = (todoTitle: string, parentProjectTitle: string) => {
 
         // init todo that will be returned
@@ -172,6 +172,13 @@ export const todoModule = (() => {
         
         projectModule.removeTodoFromProject(todo, todo.parentProject);
     }
+
+    const clearCompletedTodosList = () => {
+        completedTodosList = todoModule.completedTodosList;
+        for (let i = 0; i < completedTodosList.length + 1; i++) {
+            completedTodosList.pop();
+        }
+    }
     
     return {
         completedTodosList: completedTodosList,
@@ -180,7 +187,8 @@ export const todoModule = (() => {
         editTodo: editTodo,
         deleteTodo: deleteTodo,
         getTodoByTitle: getTodoByTitle,
-        markTodoAsCompleted: markTodoAsCompleted
+        markTodoAsCompleted: markTodoAsCompleted,
+        clearCompletedTodosList: clearCompletedTodosList
     }
     
     })();
