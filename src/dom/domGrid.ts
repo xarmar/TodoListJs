@@ -273,7 +273,7 @@ export const domGrid = (() => {
 
 
                 let checkAsComplete = document.createElement('p');
-                checkAsComplete.classList.add('checkOrDelete');
+                checkAsComplete.setAttribute('data-targetrow', `${todoCount}`);
 
                 let completed: boolean = todo.completed
                 checkOrDeleteTd.appendChild(checkAsComplete);
@@ -284,6 +284,7 @@ export const domGrid = (() => {
                 }
                 else {
                     checkAsComplete.innerText = '\u{2713}'
+                    checkAsComplete.classList.add('checkTodo');
                     checkAsComplete.setAttribute('title', 'Click to mark as completed.')
                     checkAsComplete.addEventListener('click', function(event) {
                         todoModule.markTodoAsCompleted(todo, event);  
@@ -360,37 +361,68 @@ export const domGrid = (() => {
                 singleCell.appendChild(divInsideCell);
 
                 let description = document.createElement('p');
-                description.innerHTML = '<strong>Description</strong>: ' + todo.description;
                 description.classList.add('todoDescription');
+
+                if(todo.description === "") {
+                    description.innerHTML = '<strong>Description</strong>: No description given... ';
+                }
+
+                else {
+                    description.innerHTML = '<strong>Description</strong>: ' + todo.description;
+                }
 
                 let parentProject = document.createElement('p');
                 parentProject.innerHTML= '<strong>Project</strong>: ' + todo.parentProject;
                 parentProject.classList.add('parentProject');
 
-                let edit = document.createElement('p');
-                edit.innerText= 'Edit';
-                edit.classList.add('edit');
-                edit.addEventListener('click', function(event:any) {
-                    let project = event.target.offsetParent.dataset.project;
-                    let title = event.target.offsetParent.dataset.todotitle;
-                    todoModule.editTodo(project, title);
-                });
+                if(!completed) {
+                    let edit = document.createElement('p');
+                    edit.innerText= 'Edit';
+                    edit.classList.add('edit');
+                    edit.addEventListener('click', function(event:any) {
+                        let project = event.target.offsetParent.dataset.project;
+                        let title = event.target.offsetParent.dataset.todotitle;
+                        todoModule.editTodo(project, title);
+                    });
+                    divInsideCell.appendChild(edit);
+                }
 
                 let deleteTodo = document.createElement('p');
                 deleteTodo.innerText = 'Delete';
                 deleteTodo.classList.add('deleteTodo');
                 deleteTodo.setAttribute('data-targetrow', `${todoCount}`);
                 deleteTodo.addEventListener('click', function(event:any) {
-                    let parentProjectTitle = event.target.offsetParent.dataset.project;
+
                     let todoTitle = event.target.offsetParent.dataset.todotitle;
-                    todoModule.deleteTodo(todoTitle, parentProjectTitle, event);
+                    let parentProjectTitle = event.target.offsetParent.dataset.project;
+
+                    if(!completed) {
+                        todoModule.deleteTodo(todoTitle, parentProjectTitle, event);
+                    }
+                    else {
+                        let completedList = todoModule.completedTodosList;
+                        completedList.forEach(todo => {
+                            if(todo.title === todoTitle && todo.parentProject === parentProjectTitle) {
+                                let index = completedList.indexOf(todo);
+                                completedList.splice(index, 1);
+                            }
+                        });
+                    }
+
+                    // Remove table
+                    let targetRow = event.target.dataset.targetrow;
+                    let tableRowToRemove = document.querySelector(`#data-row${targetRow}`);
+                    tableRowToRemove.remove();
+                    let expandedTodoToRemove = document.querySelector(`#expanded${targetRow}`);
+                    expandedTodoToRemove.remove();
+        
                 });
 
                 // increment Todo count
                 todoCount++;
 
 
-                helperfunction.appendMultipleNodesToParent(divInsideCell, description, parentProject, edit, deleteTodo);
+                helperfunction.appendMultipleNodesToParent(divInsideCell, description, parentProject, deleteTodo);
                 helperfunction.appendMultipleNodesToParent(expandedTodo, singleCell);
 
                 helperfunction.insertAfter(expandedTodo, tableRow);

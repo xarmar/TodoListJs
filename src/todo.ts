@@ -3,7 +3,6 @@ import { projectModule, listOfProjects, Project } from "./project";
 import { domForm } from "./dom/domForm";
 import { format } from 'date-fns';
 import * as moment from "moment";
-import { domGrid } from "./dom/domGrid";
 
 export class Todo {
     parentProject: string;
@@ -112,19 +111,23 @@ export const todoModule = (() => {
 
     }
 
-    const deleteTodo = (todoTitle, parentProjectTitle, event) => {
-        
-        // Remove Todo from the Project
-        let targetTodo = todoModule.getTodoByTitle(todoTitle, parentProjectTitle);
-        projectModule.removeTodoFromProject(targetTodo, parentProjectTitle);
+    const deleteTodo = (todoTitle, parentProjectTitle, event, isCompleted) => {
 
-        // Delete the tableRow on screen
-        let targetRow = event.target.dataset.targetrow;
-
-        let tableRowToRemove = document.querySelector(`#data-row${targetRow}`);
-        tableRowToRemove.remove();
-        let expandedTodoToRemove = document.querySelector(`#expanded${targetRow}`);
-        expandedTodoToRemove.remove();
+        // if Todo has been completed, remove from completedTodosList
+        if (isCompleted) {
+            let completedTodosList = todoModule.completedTodosList;
+            completedTodosList.forEach(todo => {
+                if(todo.title === todoTitle && todo.parentProject === parentProjectTitle) {
+                    let index = completedTodosList.indexOf(todo);
+                    completedTodosList.splice(index, 1);
+                }
+             });
+        }
+        else {
+            // Remove Todo from the Project
+            let targetTodo = todoModule.getTodoByTitle(todoTitle, parentProjectTitle);
+            projectModule.removeTodoFromProject(targetTodo, parentProjectTitle);
+        }        
     }
 
     const getTodoByTitle = (todoTitle: string, parentProjectTitle: string) => {
@@ -144,6 +147,7 @@ export const todoModule = (() => {
     }
 
     const markTodoAsCompleted = (todo: Todo, event) => {  
+
         // Make todo status as completed
         todo.toggleCompleteStatus();
         
