@@ -120,7 +120,7 @@ export const todoModule = (() => {
 
         // Delete the tableRow on screen
         let targetRow = event.target.dataset.targetrow;
-        
+
         let tableRowToRemove = document.querySelector(`#data-row${targetRow}`);
         tableRowToRemove.remove();
         let expandedTodoToRemove = document.querySelector(`#expanded${targetRow}`);
@@ -145,15 +145,18 @@ export const todoModule = (() => {
 
     const markTodoAsCompleted = (todo: Todo, event) => {  
         // Make todo status as completed
-        todo.completed = true;
+        todo.toggleCompleteStatus();
         
         // Add Todo to a list of completed Todos
         completedTodosList.push(todo);
 
-        // Remove Todo from Table Row and parentProject.
-        let todoRow: any = event.path[2];
-        todoRow.remove();
-
+        // Remove Todo from table
+        let targetRow = event.target.dataset.targetrow;
+        let tableRowToRemove = document.querySelector(`#data-row${targetRow}`);
+        tableRowToRemove.remove();
+        let expandedTodoToRemove = document.querySelector(`#expanded${targetRow}`);
+        expandedTodoToRemove.remove();
+        
         projectModule.removeTodoFromProject(todo, todo.parentProject);
     }
     
