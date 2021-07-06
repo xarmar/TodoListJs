@@ -50,20 +50,8 @@ export const pubSubModule = (() => {
     const editTodo = PubSub.subscribe(editTodoFormSubmission, function(editTodoForm, 
         {title, priority, dueDate, projectTitle, description, titleOfProjectToBeEdited, todoToBeEditedTitle}) {
         
-        // find Project by it's title
-        let beforeEditParentProject: Project = projectModule.findProject(titleOfProjectToBeEdited);
-        let beforeEditParentProjectChildren: Todo[] = beforeEditParentProject.children;
-
-        // init variable that stores the todo that will be edited
-        
-        let todoThatWillBeEdited: Todo;
-        
-        // find todo that will be edited
-        beforeEditParentProjectChildren.forEach(todo => {
-            if(todo.title === todoToBeEditedTitle) {
-                todoThatWillBeEdited = todo;
-            }
-        });
+        // Find Todo that will be edited
+        let todoThatWillBeEdited: Todo = todoModule.getTodoByTitle(todoToBeEditedTitle, titleOfProjectToBeEdited);
 
         // remove the Todo from the previous projecT
         projectModule.removeTodoFromProject(todoThatWillBeEdited, titleOfProjectToBeEdited);
