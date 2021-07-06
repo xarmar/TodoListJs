@@ -1,7 +1,6 @@
 import { domForm } from "./domForm";
 import { helperfunction } from "../helperFunctions";
 import { domGrid } from "./domGrid";
-import { todoModule } from "../todo";
 
 // Navbar and LeftStickyNavBar DOM maniputalion is here
 export const domNavBar = (() => {

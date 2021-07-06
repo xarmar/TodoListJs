@@ -1,11 +1,11 @@
 require ('./style.scss');
 import { todoModule } from "./todo";
-import { projectModule } from "./project";
+import { projectModule, listOfProjects } from "./project";
 import { domNavBar } from "./dom/domNavBar";
 import { domGrid } from "./dom/domGrid";
 
 let shopppingProject = projectModule.newProject('Shopping');
-projectModule.listOfProjects.push(shopppingProject);
+listOfProjects.push(shopppingProject);
 
 let exampleDate = new Date;
 let oneMoreWeek = new Date;
@@ -19,7 +19,7 @@ let icreCream = todoModule.newTodo('Ice cream', "high", exampleDate, 'Shopping',
 projectModule.appendTodoToProject(icreCream, 'Shopping');
 'Movies I want to watch'
 let moviesProject = projectModule.newProject('Movies To Watch', );
-projectModule.listOfProjects.push(moviesProject);
+listOfProjects.push(moviesProject);
 
 
 let rambo = todoModule.newTodo('Rambo', "low", exampleDate, 'Movies To Watch', 'Love Stallonne. Must watch.');

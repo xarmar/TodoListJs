@@ -1,6 +1,5 @@
-import { Priority, ProjectType } from "../types";
 import { format } from 'date-fns'
-import { projectModule } from "../project";
+import { projectModule, listOfProjects, Project} from "../project";
 import { Todo, todoModule } from "../todo";
 import { helperfunction } from "../helperFunctions";
 import { domForm } from "./domForm";
@@ -104,7 +103,7 @@ export const domGrid = (() => {
     const populateSideBarProjectsList = () => {
         let projectUnorderedList = document.querySelector('#projectUnorderedList');
         
-        const projectsArray = projectModule.listOfProjects;
+        const projectsArray = listOfProjects;
 
         // loops through projects array and populate it alol projects
         projectsArray.forEach(project => {
@@ -147,7 +146,7 @@ export const domGrid = (() => {
         }
 
         // find project we want to populate the rightDiv with
-        let chosenProject: ProjectType = projectModule.findProject(projectTitle);  
+        let chosenProject: Project = projectModule.findProject(projectTitle);  
         
         // get children ( todo [] ) of Project
         let projectChildren = chosenProject.children

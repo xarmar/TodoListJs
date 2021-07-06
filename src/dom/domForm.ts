@@ -1,9 +1,7 @@
-import { intlFormat } from "date-fns";
 import { helperfunction } from "../helperFunctions";
-import { projectModule } from "../project";
+import { listOfProjects, Project} from "../project";
 import { pubSubModule } from "../pubSub/pubSub";
-import { Todo, todoModule } from "../todo";
-import { ProjectType } from "../types";
+import { Todo } from "../todo";
 import { domNavBar } from "./domNavBar";
 
 // Forms DOM maniputalion is here
@@ -14,7 +12,7 @@ export const domForm = (() => {
     // TODO FORM
 
     // Runs popUp if '+' button in NavBar Clicked OR when user clicks to 'edit' Todo
-    const todoPopUp = (project?: ProjectType, todo?: Todo) => {
+    const todoPopUp = (project?: Project, todo?: Todo) => {
         
         // If a popUp is already open - don't open another popUp
         if (showingPopUp) {
@@ -242,7 +240,7 @@ export const domForm = (() => {
 
         // Give user options to append Todo to 
 
-        let projectList = projectModule.listOfProjects;
+        let projectList = listOfProjects;
 
         projectList.forEach(proj => {
             let title = proj.title;

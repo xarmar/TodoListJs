@@ -1,8 +1,8 @@
 import PubSub from 'pubsub-js';
 import { Todo, todoModule } from "../todo";
 import { domGrid } from "../dom/domGrid";
-import { projectModule } from "../project";
-import { ProjectType } from '../types';
+import { projectModule, listOfProjects, Project } from "../project";
+
 
 // Navbar and LeftStickyNavBar DOM maniputalion is here
 export const pubSubModule = (() => {
@@ -51,7 +51,7 @@ export const pubSubModule = (() => {
         {title, priority, dueDate, projectTitle, description, titleOfProjectToBeEdited, todoToBeEditedTitle}) {
         
         // find Project by it's title
-        let beforeEditParentProject: ProjectType = projectModule.findProject(titleOfProjectToBeEdited);
+        let beforeEditParentProject: Project = projectModule.findProject(titleOfProjectToBeEdited);
         let beforeEditParentProjectChildren: Todo[] = beforeEditParentProject.children;
 
         // init variable that stores the todo that will be edited
@@ -72,7 +72,7 @@ export const pubSubModule = (() => {
         todoThatWillBeEdited.changeTitle(title);
         todoThatWillBeEdited.changePriority(priority);
         todoThatWillBeEdited.changeDueDate(dueDate);
-        todoThatWillBeEdited.changeTitle(projectTitle);
+        todoThatWillBeEdited.changeParentProject(projectTitle);
         todoThatWillBeEdited.changeDescription(description);
 
         // Append edited Todo to the new ParentProject
@@ -83,7 +83,7 @@ export const pubSubModule = (() => {
     
     const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title}) {
         let newProject = projectModule.newProject(title);
-        projectModule.listOfProjects.push(newProject);
+        listOfProjects.push(newProject);
         domGrid.updateSideBarProjects();
     });
 

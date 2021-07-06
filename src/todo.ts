@@ -1,5 +1,5 @@
-import { Priority, ProjectType } from "./types";
-import { projectModule } from "./project";
+import { Priority } from "./types";
+import { projectModule, listOfProjects, Project } from "./project";
 import { domForm } from "./dom/domForm";
 import { format } from 'date-fns';
 import * as moment from "moment";
@@ -39,8 +39,8 @@ export class Todo {
         this.dueDate = newDueDate;
     }
 
-    addNewNote (noteToAdd: string) {
-        this.notes.push(noteToAdd);
+    changeParentProject (newParentProject: string) {
+        this.parentProject = newParentProject;
     }
 
     toggleCompleteStatus() {
@@ -62,7 +62,7 @@ export const todoModule = (() => {
         let todosThatWillPopulateTableArray: Todo[] = [];
 
         if (!weekDate) {
-            projectModule.listOfProjects.forEach(project => {
+            listOfProjects.forEach(project => {
                 project.children.forEach(todo => {
                     if(format(todo.dueDate, 'PP') === format(date, 'PP')) {
                         todosThatWillPopulateTableArray.push(todo);
@@ -71,7 +71,7 @@ export const todoModule = (() => {
             });
         }
         else {
-            projectModule.listOfProjects.forEach(project => {
+            listOfProjects.forEach(project => {
                 project.children.forEach(todo => {
                     let formattedTodoDate = moment(todo.dueDate).format('YYYY-MM-DD');
                     let formattedDate = moment(date).format('YYYY-MM-DD');
@@ -88,8 +88,8 @@ export const todoModule = (() => {
     const editTodo = (projectTitle: string, todoTitle: string) => {
        
         // Identify Project
-        let targetProject: ProjectType;
-        let projectsList = projectModule.listOfProjects;
+        let targetProject: Project  ;
+        let projectsList = listOfProjects;
 
         projectsList.forEach(project => {
             if(project.title === projectTitle) {
