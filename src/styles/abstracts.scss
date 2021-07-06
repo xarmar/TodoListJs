@@ -1,0 +1,72 @@
+// Colours
+$dark-purple: #361999;
+$cyan-blue: #78FFF1;
+$pink-attack: #FF6495;
+$light-grey: #f7f7f7;
+$dark-grey: #4d4d4d;
+$white: white;
+$black: black;
+
+
+@mixin flexRow {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+@mixin flexColumn {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin leftGridHoverEffect {
+    cursor: pointer;
+    background-color: $white;
+    color: $dark-purple;
+    font-weight: 600;
+    transition: color 1s ease;
+}
+
+@mixin buttonBackground ($backgroundColor, $textColor) {
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    padding: 10px;
+    text-align: center;
+    border: 3px solid transparent;
+    background-color: $backgroundColor;
+    color: $textColor;
+}
+
+@mixin buttonHover ($hovercolor) {
+    cursor: pointer;
+    border: 3px solid $hovercolor;
+    transition: all 1s ease;
+}
+
+@mixin centerHorizontally {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body {
+    background-color: $white;
+}
+
+/* HIDE RADIO */
+[type=radio] { 
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* IMAGE STYLES */
+[type=radio] + img {
+    cursor: pointer;
+}
+  
+  /* CHECKED STYLES */
+[type=radio]:checked + img {
+    outline: 3px solid $dark-purple;
+}

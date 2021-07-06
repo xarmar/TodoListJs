@@ -1,0 +1,199 @@
+@use './abstracts.scss';
+// Grid display
+#gridDiv {
+    min-height: calc(100vh - 80px);
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    grid-template-rows: 1fr;
+}
+// Left-side of Grid - TodayTomorrowWeekDiv and ProjectsDiv
+#stickyLeftDiv {
+    background-color: abstracts.$light-grey;
+    #todayTomorrowWeekDiv {
+        display: flex;
+        width: 100%;
+        ul {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            list-style-type: none;
+            padding-left: 0px;
+            margin: 20px 0px 20px 30px;
+            li {
+                margin-top: 15px;
+                font-size: 1.2em;
+                &:hover {
+                 @include abstracts.leftGridHoverEffect();
+                }
+                &.selected {
+                    color: red;
+                }
+            }
+        }
+    }
+    #projectDiv {
+        margin: 20px 15px 0px 20px;
+        @include abstracts.flexRow();
+        p {
+            line-height: 0px;
+            font-size: 1.2em;
+        }
+        #expandProjectsArrow {
+            margin-right: 5%;
+        }
+    }
+    #listOfProjectsDiv {
+        #projectUnorderedList {
+            padding-inline-start: 10px;
+            .project {
+                margin: 15px 20px 15px 20px;
+                padding-left: 0px;
+                list-style-type: none;
+                font-size:1.1em;
+                &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+            }
+        }
+        #addProject {
+            @extend .project;
+            font-size: 1em;
+            margin-left: 25px;
+            max-width: fit-content;
+            color: abstracts.$white;
+            background-color: abstracts.$dark-purple;
+            padding: 5px 6px 5px 6px;
+            border-radius: 10px;
+            border: transparent solid 4px;
+            &:hover {
+                cursor: pointer;
+                text-decoration: none;
+                border: abstracts.$pink-attack solid 4px
+            }
+        }
+    }
+}
+
+// Right-side of Grid
+#stickyRightDiv {
+    #projectAndTodosDiv {
+        margin-top: 25px;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        background-color: abstracts.$light-grey;
+        width: 90%;
+        @include abstracts.centerHorizontally();
+        text-align: center;
+        #projectHeader {
+            font-size: 1.5em;
+        }
+        #clearCompletedTodosList {
+            @include abstracts.buttonBackground(pink, abstracts.$black);
+            max-width: fit-content;
+            cursor: pointer;
+        }
+        #tableDiv {
+            margin: 10px 5px 10px 0px;
+            max-width: fit-content;
+            @include abstracts.centerHorizontally();
+            background-color: abstracts.$light-grey;
+            color: abstracts.$white;
+            table {
+                border-spacing: 0px;
+                th, td, input {
+                    padding: 5px 10px 5px 10px;
+                }
+                th {
+                    background-color: abstracts.$dark-grey;
+                }
+                input {
+                    margin: auto;
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+                td {
+                    color: black;
+                    border-bottom: 1px solid abstracts.$white;
+                    img {
+                        margin: auto;
+                        height: 30px;
+                        width: auto;
+                    }
+                }
+                #checkOrDeleteTd {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-evenly;
+                }
+                .checkTodo:hover {
+                    cursor: pointer;
+                }
+
+                .detailsExpandArrow {
+                    background-color: pink;
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+                .expandedTodo {
+                    opacity: 0;
+                    position: absolute;
+                    visibility: hidden;
+                }
+                .showDetails {
+                    opacity: 100;
+                    position: relative;
+                    visibility: visible;
+                    transition: 0.5s ease-in-out all;
+                }
+                .expandedCell {
+                    background-color: antiquewhite;
+                    div {
+                        font-size: 90%;
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-template-rows: 1fr 1fr 1fr;
+                        justify-items: center;
+                        grid-template-areas: 
+                        'description description'
+                        'project project'
+                        'edit delete';
+                    }
+                    .todoDescription {
+                        grid-area: description;
+                    }
+                    .parentProject {
+                        grid-area: project;
+                    }
+                    .edit {
+                        grid-area: edit;
+                        &:hover {
+                            text-decoration: underline;
+                            cursor: pointer;
+                        }
+                    }
+                    .deleteTodo {
+                        grid-area: delete;
+                        &:hover {
+                            text-decoration: underline;
+                            cursor: pointer;
+                        }
+                    }
+                }
+                .lowPriority {
+                    content: url(./images/setLow.svg);
+                }
+                .mediumPriority {
+                    content: url(./images/setMedium.svg);
+                }
+                .highPriority {
+                    content: url(./images/setHigh.svg);
+                }
+            }
+        }
+    }
+}

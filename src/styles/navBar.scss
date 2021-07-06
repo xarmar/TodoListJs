@@ -1,0 +1,42 @@
+@use './abstracts.scss';
+#navBar {
+    height: 80px;
+    font-size: 2.5em;
+    @include abstracts.flexRow();
+    background-color: abstracts.$dark-purple;
+    p {
+        color: abstracts.$white;
+        border-radius: 15px;
+        line-height: 0px;
+        &:hover {
+            cursor: pointer;
+            animation-name: pinkHearbeatEffect;
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+        }
+        @keyframes pinkHearbeatEffect {
+            50% {
+                color: abstracts.$pink-attack;
+                transform: scale(1.05);
+                transition: all 0.2s ease;
+            }
+        }
+    }
+    #leftHeaderDiv {
+        @include abstracts.flexRow();
+        margin: auto auto auto 2%;
+    }
+    #rightHeaderDiv {
+        @include abstracts.flexRow();
+        margin: auto 4vw auto auto;
+        width: 100px;
+        }
+}
+
+.displayNone {
+    display: none;
+}
+
+.expandGrid {
+    grid-template-columns: 1fr !important;
+}
