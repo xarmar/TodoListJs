@@ -223,6 +223,24 @@ export const domGrid = (() => {
 
         // if array has any elements, display table
         else {
+            
+            // give option to clear list of completed Todos
+            if (headerOfTable === 'Completed Todos') {
+                let clearListP = document.createElement('p');
+                clearListP.innerText = 'Clear Whole List';
+                clearListP.id = 'clearCompletedTodosList';
+                projectAndTodosDiv.appendChild(clearListP);
+                clearListP.addEventListener('click', function() {
+                    // clear list
+                    todoModule.clearCompletedTodosList();
+
+                    // remove table
+                    helperfunction.removeChildNodes(stickyRightDiv);
+
+                    // update table (in this case, empty one)
+                    populateTableWithTodoArray(arrayOfTodos, stickyRightDiv, headerOfTable);
+                });
+            }
 
             // Init div where table will be appended
             let tableDiv = document.createElement('div');
