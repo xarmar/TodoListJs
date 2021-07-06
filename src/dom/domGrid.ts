@@ -117,7 +117,8 @@ export const domGrid = (() => {
             projectUnorderedList.appendChild(ProjectToBeListed);
         });
     }
-        // Removes previous unordered list of projects in left-grid and update them.
+    
+    // Removes previous unordered list of projects in left-grid and update them.
     const updateSideBarProjects = () => {
         let nodeToRemove = document.querySelector('#projectUnorderedList');
         helperfunction.removeChildNodes(nodeToRemove);
@@ -225,7 +226,7 @@ export const domGrid = (() => {
         else {
             
             // give option to clear list of completed Todos
-            if (headerOfTable === 'Completed Todos') {
+            if (headerOfTable === 'History') {
                 let clearListP = document.createElement('p');
                 clearListP.innerText = 'Clear Whole List';
                 clearListP.id = 'clearCompletedTodosList';
@@ -432,11 +433,11 @@ export const domGrid = (() => {
         }
     }
 
-    // Populate Todo History Table
+    // Populates Todo History Table ONLY
     const populateHistoryTable = () => {
         let stickyRightDiv = document.querySelector('#stickyRightDiv');
             helperfunction.removeChildNodes(stickyRightDiv);
-            domGrid.populateTableWithTodoArray(todoModule.completedTodosList, stickyRightDiv, 'Completed Todos');
+            domGrid.populateTableWithTodoArray(todoModule.completedTodosList, stickyRightDiv, 'History');
     }
 
     return  {
