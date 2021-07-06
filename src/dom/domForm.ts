@@ -351,7 +351,7 @@ export const domForm = (() => {
         helperfunction.appendMultipleNodesToParent(buttonsDiv, addButton, cancelButton);
     }
 
-    // When a Form is Submited, capture User Input
+    // When a Form is Submitted, capture User Input
     const captureForm = (event) => {
         // prevent page from refreshing
         event.preventDefault();
