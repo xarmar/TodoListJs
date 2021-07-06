@@ -146,7 +146,7 @@ export const domGrid = (() => {
         }
 
         // find project we want to populate the rightDiv with
-        let chosenProject: Project = projectModule.findProject(projectTitle);  
+        let chosenProject: Project = projectModule.getProjectByTitle(projectTitle);  
         
         // get children ( todo [] ) of Project
         let projectChildren = chosenProject.children
@@ -266,6 +266,7 @@ export const domGrid = (() => {
 
                 // create table row for todo
                 let tableRow = document.createElement('tr');
+                tableRow.id = `data-row${todoCount}`;
 
                 let checkOrDeleteTd = document.createElement('td');
                 checkOrDeleteTd.id = 'checkOrDeleteTd';
@@ -348,7 +349,6 @@ export const domGrid = (() => {
                 let expandedTodo = document.createElement('tr');
                 expandedTodo.classList.add('expandedTodo');
                 expandedTodo.id = `expanded${todoCount}`;
-                todoCount++;
 
                 let singleCell = document.createElement('td');
                 singleCell.classList.add('expandedCell');
@@ -379,6 +379,15 @@ export const domGrid = (() => {
                 let deleteTodo = document.createElement('p');
                 deleteTodo.innerText = 'Delete';
                 deleteTodo.classList.add('deleteTodo');
+                deleteTodo.setAttribute('data-targetrow', `${todoCount}`);
+                deleteTodo.addEventListener('click', function(event:any) {
+                    let parentProjectTitle = event.target.offsetParent.dataset.project;
+                    let todoTitle = event.target.offsetParent.dataset.todotitle;
+                    todoModule.deleteTodo(todoTitle, parentProjectTitle, event);
+                });
+
+                // increment Todo count
+                todoCount++;
 
 
                 helperfunction.appendMultipleNodesToParent(divInsideCell, description, parentProject, edit, deleteTodo);
@@ -386,7 +395,7 @@ export const domGrid = (() => {
 
                 helperfunction.insertAfter(expandedTodo, tableRow);
 
-            })
+            });
         }
     }
 
