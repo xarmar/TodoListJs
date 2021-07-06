@@ -1,7 +1,7 @@
 import PubSub from 'pubsub-js';
 import { Todo, todoModule } from "../todo";
 import { domGrid } from "../dom/domGrid";
-import { projectModule, listOfProjects, Project } from "../project";
+import { projectModule, listOfProjects } from "../project";
 
 
 // Navbar and LeftStickyNavBar DOM maniputalion is here
