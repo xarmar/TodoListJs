@@ -393,29 +393,12 @@ export const domGrid = (() => {
                 deleteTodo.setAttribute('data-targetrow', `${todoCount}`);
                 deleteTodo.addEventListener('click', function(event:any) {
 
+                    // Get title and parentProject of Todo user asked to delete
                     let todoTitle = event.target.offsetParent.dataset.todotitle;
                     let parentProjectTitle = event.target.offsetParent.dataset.project;
 
-                    if(!completed) {
-                        todoModule.deleteTodo(todoTitle, parentProjectTitle, event);
-                    }
-                    else {
-                        let completedList = todoModule.completedTodosList;
-                        completedList.forEach(todo => {
-                            if(todo.title === todoTitle && todo.parentProject === parentProjectTitle) {
-                                let index = completedList.indexOf(todo);
-                                completedList.splice(index, 1);
-                            }
-                        });
-                    }
-
-                    // Remove table
-                    let targetRow = event.target.dataset.targetrow;
-                    let tableRowToRemove = document.querySelector(`#data-row${targetRow}`);
-                    tableRowToRemove.remove();
-                    let expandedTodoToRemove = document.querySelector(`#expanded${targetRow}`);
-                    expandedTodoToRemove.remove();
-        
+                    // Delete Todo - if completed = false => delete from project. Else delete from completedTodosList
+                    todoModule.deleteTodo(todoTitle, parentProjectTitle, event, todo.completed);
                 });
 
                 // increment Todo count
