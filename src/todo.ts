@@ -3,6 +3,7 @@ import { projectModule, listOfProjects, Project } from "./project";
 import { domForm } from "./dom/domForm";
 import { format } from 'date-fns';
 import * as moment from "moment";
+import { domGrid } from "./dom/domGrid";
 
 export class Todo {
     parentProject: string;
@@ -88,7 +89,7 @@ export const todoModule = (() => {
     const editTodo = (projectTitle: string, todoTitle: string) => {
        
         // Identify Project
-        let targetProject: Project  ;
+        let targetProject: Project;
         let projectsList = listOfProjects;
 
         projectsList.forEach(project => {
@@ -111,6 +112,37 @@ export const todoModule = (() => {
 
     }
 
+    const deleteTodo = (todoTitle, parentProjectTitle, event) => {
+        
+        // Remove Todo from the Project
+        let targetTodo = todoModule.getTodoByTitle(todoTitle, parentProjectTitle);
+        projectModule.removeTodoFromProject(targetTodo, parentProjectTitle);
+
+        // Delete the tableRow on screen
+        let targetRow = event.target.dataset.targetrow;
+        
+        let tableRowToRemove = document.querySelector(`#data-row${targetRow}`);
+        tableRowToRemove.remove();
+        let expandedTodoToRemove = document.querySelector(`#expanded${targetRow}`);
+        expandedTodoToRemove.remove();
+    }
+
+    const getTodoByTitle = (todoTitle: string, parentProjectTitle: string) => {
+
+        // init todo that will be returned
+        let returnedTodo: Todo;
+
+        let parentProject: Project = projectModule.getProjectByTitle(parentProjectTitle);
+        let parentProjectChildren: Todo[] = parentProject.children;
+        // find todo that will be edited
+        parentProjectChildren.forEach(todo => {
+            if(todo.title === todoTitle) {
+                returnedTodo = todo;
+            }
+        });
+        return returnedTodo
+    }
+
     const markTodoAsCompleted = (todo: Todo, event) => {  
         // Make todo status as completed
         todo.completed = true;
@@ -130,6 +162,8 @@ export const todoModule = (() => {
         newTodo: newTodo,
         generateArrayOfTodosBasedOnDate: generateArrayOfTodosBasedOnDate,
         editTodo: editTodo,
+        deleteTodo: deleteTodo,
+        getTodoByTitle: getTodoByTitle,
         markTodoAsCompleted: markTodoAsCompleted
     }
     
