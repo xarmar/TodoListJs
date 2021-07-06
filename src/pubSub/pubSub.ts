@@ -4,7 +4,7 @@ import { domGrid } from "../dom/domGrid";
 import { projectModule, listOfProjects } from "../project";
 
 
-// Navbar and LeftStickyNavBar DOM maniputalion is here
+// Handles forms submissions and creates Todos and projects based on form input
 export const pubSubModule = (() => {
 
     const newTodoFormSubmission = 'newTodoFormSubmition';
