@@ -128,6 +128,15 @@ export const todoModule = (() => {
             let targetTodo = todoModule.getTodoByTitle(todoTitle, parentProjectTitle);
             projectModule.removeTodoFromProject(targetTodo, parentProjectTitle);
         }        
+
+        // Remove Todo from table
+        let targetRow = event.target.dataset.targetrow;
+        let tableRowToRemove = document.querySelector(`#data-row${targetRow}`);
+        tableRowToRemove.remove();
+        let expandedTodoToRemove = document.querySelector(`#expanded${targetRow}`);
+        expandedTodoToRemove.remove();
+
+
     }
 
     const getTodoByTitle = (todoTitle: string, parentProjectTitle: string) => {
