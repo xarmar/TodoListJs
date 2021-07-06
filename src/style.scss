@@ -186,6 +186,11 @@ body {
         #projectHeader {
             font-size: 1.5em;
         }
+        #clearCompletedTodosList {
+            @include buttonBackground(pink, $black);
+            max-width: fit-content;
+            cursor: pointer;
+        }
         #tableDiv {
             margin: 10px 5px 10px 0px;
             max-width: fit-content;
@@ -223,7 +228,7 @@ body {
                 .checkTodo:hover {
                     cursor: pointer;
                 }
-                
+
                 .detailsExpandArrow {
                     background-color: pink;
                     &:hover {
