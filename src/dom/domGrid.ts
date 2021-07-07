@@ -213,6 +213,29 @@ export const domGrid = (() => {
         projectOrDayHeader.id = 'projectHeader';
         projectAndTodosDiv.appendChild(projectOrDayHeader);
 
+        // If user is viewing a Project, give option to edit or delete project
+        if(headerOfTable !== 'History' && headerOfTable !== 'Today'
+        && headerOfTable !== 'Tomorrow' && headerOfTable !== 'Week') {
+            let editAndDeleteProjectDiv = document.createElement('div');
+            editAndDeleteProjectDiv.id = 'editAndDeleteProjectDiv';
+
+            let editProject = document.createElement('p');
+            editProject.innerText = 'Edit Project';
+            editProject.id = 'editProject';
+            editProject.setAttribute('data-project', `${headerOfTable}`);
+            editProject.setAttribute('data-type', 'edit');
+            editProject.addEventListener('click', function(event) {
+                domForm.projectPopUp(event);
+            });
+
+
+            let deleteProject = document.createElement('p');
+            deleteProject.innerText = 'Delete Project';
+            deleteProject.id = 'deleteProject';
+            helperfunction.appendMultipleNodesToParent(editAndDeleteProjectDiv, editProject, deleteProject);
+            projectAndTodosDiv.appendChild(editAndDeleteProjectDiv);
+        }
+
         // If array is empty. do not display a table
         if(arrayOfTodos.length === 0) {
             let sorryDiv = document.createElement('div');
