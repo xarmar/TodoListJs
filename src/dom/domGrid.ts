@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
 import { projectModule, listOfProjects, Project} from "../project";
-import { Todo, todoModule } from "../todo";
+import { Todo, todoModule, completedTodosList } from "../todo";
 import { helperfunction } from "../helperFunctions";
 import { domForm } from "./domForm";
 import { domNavBar } from "./domNavBar";
@@ -465,7 +465,7 @@ export const domGrid = (() => {
     const populateHistoryTable = () => {
         let stickyRightDiv = document.querySelector('#stickyRightDiv');
             helperfunction.removeChildNodes(stickyRightDiv);
-            domGrid.populateTableWithTodoArray(todoModule.completedTodosList, stickyRightDiv, 'History');
+            domGrid.populateTableWithTodoArray(completedTodosList, stickyRightDiv, 'History');
     }
 
     return  {
