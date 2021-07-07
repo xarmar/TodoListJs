@@ -50,7 +50,7 @@
                 margin: 15px 20px 15px 20px;
                 padding-left: 0px;
                 list-style-type: none;
-                font-size:1.1em;
+                font-size:0.99em;
                 &:hover {
                     cursor: pointer;
                     text-decoration: underline;
@@ -89,6 +89,27 @@
         text-align: center;
         #projectHeader {
             font-size: 1.5em;
+        }
+        #editAndDeleteProjectDiv {
+            @include abstracts.flexRow();
+            @include abstracts.centerHorizontally();
+            width: 100%;
+            #editProject {
+                @include abstracts.buttonBackground(pink, abstracts.$black);
+                max-width: fit-content;
+                margin-right: 10px;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+            #deleteProject {
+                @include abstracts.buttonBackground(abstracts.$pink-attack, abstracts.$black);
+                max-width: fit-content;
+                margin-left: 10px;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
         }
         #clearCompletedTodosList {
             @include abstracts.buttonBackground(pink, abstracts.$black);
