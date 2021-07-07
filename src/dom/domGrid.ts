@@ -219,6 +219,7 @@ export const domGrid = (() => {
             let editAndDeleteProjectDiv = document.createElement('div');
             editAndDeleteProjectDiv.id = 'editAndDeleteProjectDiv';
 
+            // add 'Edit Project' button 
             let editProject = document.createElement('p');
             editProject.innerText = 'Edit Project';
             editProject.id = 'editProject';
@@ -228,10 +229,14 @@ export const domGrid = (() => {
                 domForm.projectPopUp(event);
             });
 
-
+            // Add 'Delete Project' button
             let deleteProject = document.createElement('p');
             deleteProject.innerText = 'Delete Project';
             deleteProject.id = 'deleteProject';
+            deleteProject.setAttribute('data-project', `${headerOfTable}`);
+            deleteProject.addEventListener('click', function() {
+                projectModule.deleteProject(headerOfTable);
+            });
             helperfunction.appendMultipleNodesToParent(editAndDeleteProjectDiv, editProject, deleteProject);
             projectAndTodosDiv.appendChild(editAndDeleteProjectDiv);
         }
