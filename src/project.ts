@@ -1,3 +1,5 @@
+import { domGrid } from "./dom/domGrid";
+import { helperfunction } from "./helperFunctions";
 import { Todo } from "./todo";
 
 export class Project {
@@ -23,6 +25,31 @@ export const projectModule = (() => {
     const newProject = (title: string) => {
         let newProj = new Project(title);
         return newProj;
+    }
+
+    const deleteProject = (titleofProject: string) => {
+
+        // Identify project
+        let projectToDelete: Project = getProjectByTitle(titleofProject);
+
+        console.log(titleofProject);
+        console.log(projectToDelete);
+
+        // Delete children Todo's
+        let arrayOfTodosToDelete = projectToDelete.children;
+        arrayOfTodosToDelete.splice(0, arrayOfTodosToDelete.length);
+
+        // Delete Project
+        let indexOfProjectToDelete = listOfProjects.indexOf(projectToDelete);
+        listOfProjects.splice(indexOfProjectToDelete, 1);
+
+        // Update Left-Grid (remove deleted project)
+        domGrid.updateSideBarProjects();
+
+        // Remove Table and Project From Screen (display Blank);
+        let stickyRightDiv = document.querySelector('#stickyRightDiv');
+        helperfunction.removeChildNodes(stickyRightDiv);
+
     }
 
     const appendTodoToProject = (todo: Todo, projectTitle: string) => {
@@ -53,8 +80,10 @@ export const projectModule = (() => {
         return projectToReturn
     }
 
+
     return {
         newProject: newProject,
+        deleteProject: deleteProject,
         removeTodoFromProject : removeTodoFromProject,
         appendTodoToProject: appendTodoToProject,
         getProjectByTitle: getProjectByTitle
