@@ -174,10 +174,7 @@ export const todoModule = (() => {
     }
 
     const clearCompletedTodosList = () => {
-        completedTodosList = todoModule.completedTodosList;
-        for (let i = 0; i < completedTodosList.length + 1; i++) {
-            completedTodosList.pop();
-        }
+        todoModule.completedTodosList.splice(0, completedTodosList.length);
     }
     
     return {
