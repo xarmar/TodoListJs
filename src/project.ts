@@ -32,9 +32,6 @@ export const projectModule = (() => {
         // Identify project
         let projectToDelete: Project = getProjectByTitle(titleofProject);
 
-        console.log(titleofProject);
-        console.log(projectToDelete);
-
         // Delete children Todo's
         let arrayOfTodosToDelete = projectToDelete.children;
         arrayOfTodosToDelete.splice(0, arrayOfTodosToDelete.length);
