@@ -96,7 +96,7 @@ export const domForm = (() => {
         descriptionInput.setAttribute('rows', '3');
         descriptionInput.setAttribute('placeholder', 'Description is optional...');
         
-        // If its an edit request, set textContent of descriptionINput to todo.description
+        // If its an edit request, set textContent of descriptionInput to todo.description
         if (project && todo) {
             descriptionInput.innerText = todo.description;
         }
@@ -264,7 +264,14 @@ export const domForm = (() => {
 
         const addButton = document.createElement('button');
         addButton.id = 'addButton';
-        addButton.innerText = 'Add';
+         
+        // If its an edit request, set addButton Text to Edit
+        if (project && todo) {
+            addButton.innerText = 'Edit';
+        }
+        else {
+            addButton.innerText = 'Add';
+        }
 
         const cancelButton = document.createElement('button');
         cancelButton.addEventListener('click', function(event) {
@@ -280,31 +287,61 @@ export const domForm = (() => {
     // PROJECT FORM
 
     // Runs popUp if 'newProject' button in leftStickyNavBar Clicked
-    const projectPopUp = () => {
+    const projectPopUp = (event?: any) => {
         if (showingPopUp) {
             return
         }
+        
+        domNavBar.closeLeftStickyNavBar();
 
-        domNavBar.toggleLeftStickyNavBar();
+        let editRequest:boolean;
+        let projectName:string;
+
+        // If it's a request to edit Project, get Project Name
+        if (event.target.id === 'editProject') {
+            editRequest = true;
+            projectName = event.target.dataset.project;
+        }
+        else {
+            editRequest = false;
+        }
+
 
         showingPopUp = true;
         let gridDiv = document.querySelector('#gridDiv');
 
-    // Create PopUpDiv that will append to gridDiv
+        // Create PopUpDiv that will append to gridDiv
         const popUpDiv = document.createElement('div');
         popUpDiv.id = 'popUpDiv';
         gridDiv.appendChild(popUpDiv);
-    // Create Form where user will be prompted for choices
+
+        // Create Form where user will be prompted for choices
         const form = document.createElement('form');
         form.id = 'projectForm';
         form.onsubmit = captureForm;
-        form.setAttribute('data-type', 'project')
+
+        if (editRequest) {
+            form.setAttribute('data-type', 'edit');
+            form.setAttribute('data-project', projectName);
+        }
+
+        else {
+            form.setAttribute('data-type', 'new');
+        }
         popUpDiv.appendChild(form);
 
-    // Set Header at the top of the form
+        // Set Header at the top of the form
         const popUpHeader = document.createElement('p');
         popUpHeader.id = 'popUpHeader';
-        popUpHeader.innerText = 'Add New Project'
+
+        // If user is editing a Project
+        if (editRequest) {
+            popUpHeader.innerText = 'Edit Project'
+        }
+        else {
+            popUpHeader.innerText = 'Add New Project'
+        }
+
         form.appendChild(popUpHeader);
 
     // Init Div that will contain 'title' and 'description' of Project
@@ -327,6 +364,9 @@ export const domForm = (() => {
         titleInput.setAttribute('maxlength', '15');
         titleInput.required = true;
         titleInput.autofocus = true;
+        if (editRequest) {
+            titleInput.value = projectName;
+        }
 
         helperfunction.appendMultipleNodesToParent(titleField, titleLabel, titleInput);
 
@@ -337,13 +377,20 @@ export const domForm = (() => {
 
         const addButton = document.createElement('button');
         addButton.id = 'addButton';
-        addButton.innerText = 'Add';
+
+        if(editRequest) {
+            addButton.innerText = 'Edit';
+        }
+
+        else {
+            addButton.innerText = 'Add';
+        }
 
         const cancelButton = document.createElement('button');
         cancelButton.addEventListener('click', function(event) {
             event.preventDefault();
             closePopUp();
-            domNavBar.toggleLeftStickyNavBar();;
+            domNavBar.closeLeftStickyNavBar();;
         });
         cancelButton.id = 'cancelButton';
         cancelButton.innerText = 'Cancel';
@@ -358,10 +405,9 @@ export const domForm = (() => {
 
         let idOfForm = event.target.id;
 
-        // get form data
+        // get form data - type can be 'todo' or project
         let title:string = (<HTMLInputElement>document.querySelector('input#titleInput')).value;
         let type: string = event.srcElement.dataset.type;
-        
 
         // Prevents 'title' being blank
         if (helperfunction.isBlank(title)) {
@@ -381,6 +427,11 @@ export const domForm = (() => {
                 var projectToBeEditedTitle = event.srcElement.dataset.project;
                 var todoToBeEditedTitle = event.srcElement.dataset.todo;
             }
+        }
+
+        // If it's a projectForm, capture projectTitle extra field so that we know original name of Project
+        else {
+            var projectTitle: string = event.target.dataset.project;
         }
 
         // Submit form info. Type can be 'project' for projects AND 'new' or 'edit' for Todos
