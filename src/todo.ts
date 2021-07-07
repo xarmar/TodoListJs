@@ -48,10 +48,11 @@ export class Todo {
     }
 }
 
+export const completedTodosList: Todo[] = [];
+
+
 // todoModule
 export const todoModule = (() => {
-
-    let completedTodosList: Todo[] = [];
    
     const newTodo = (title: string, priority: Priority, dueDate: Date, parentProject: string, description?: string) => {
         let newTodoObject = new Todo(title, priority, dueDate, parentProject, description);
@@ -88,7 +89,6 @@ export const todoModule = (() => {
 
         // if Todo has been completed, remove from completedTodosList
         if (isCompleted) {
-            let completedTodosList = todoModule.completedTodosList;
             completedTodosList.forEach(todo => {
                 if(todo.title === todoTitle && todo.parentProject === parentProjectTitle) {
                     let index = completedTodosList.indexOf(todo);
@@ -174,11 +174,10 @@ export const todoModule = (() => {
     }
 
     const clearCompletedTodosList = () => {
-        todoModule.completedTodosList.splice(0, completedTodosList.length);
+        completedTodosList.splice(0, completedTodosList.length);
     }
     
     return {
-        completedTodosList: completedTodosList,
         newTodo: newTodo,
         generateArrayOfTodosBasedOnDate: generateArrayOfTodosBasedOnDate,
         editTodo: editTodo,
