@@ -1,5 +1,5 @@
 # TodoListJS
-- A web-application written in Typescript that allows the user to organise their time. 
+- A web-application written in Typescript that allows the user to organise their daily tasks.
 - The user can create and edit 'Projects' that contain 'Todos' and mark these 'Todos' as completed.
 
 # Technologies Used:
