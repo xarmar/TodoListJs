@@ -19,7 +19,7 @@
             flex-direction: column;
             list-style-type: none;
             padding-left: 0px;
-            margin: 20px 0px 20px 30px;
+            margin: 20px 30px 20px 30px;
             li {
                 margin-top: 15px;
                 font-size: 1.2em;
@@ -60,7 +60,7 @@
         #addProject {
             @extend .project;
             font-size: 1em;
-            margin-left: 25px;
+            margin: 0px 25px 0px 25px;
             max-width: fit-content;
             color: abstracts.$white;
             background-color: abstracts.$dark-purple;
