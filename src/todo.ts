@@ -1,7 +1,7 @@
 import { Priority } from "./types";
 import { projectModule, listOfProjects, Project } from "./project";
 import { domForm } from "./dom/domForm";
-import { format } from 'date-fns';
+import { saveLocalStorage } from "./localStorage";
 import * as moment from "moment";
 
 export class Todo {
@@ -10,17 +10,15 @@ export class Todo {
     title: string;
     description: string;
     dueDate: Date;
-    notes: string[];
     completed: boolean;
     
-    constructor(title: string, priority: Priority, dueDate: Date, parentProject?: string,  description?: string) {
+    constructor(title: string, priority: Priority, dueDate: Date, parentProject: string, completed:boolean, description?: string) {
         this.title = title;
         this.priority = priority;
         this.dueDate = dueDate;
         this.parentProject = parentProject
+        this.completed = completed;
         this.description = description;
-        this.notes = null;
-        this.completed = false;
     }
 
     changeTitle (newTitle: string) {
@@ -48,14 +46,35 @@ export class Todo {
     }
 }
 
-export const completedTodosList: Todo[] = [];
+var localCompletedTodosList: Todo[];
+export var completedTodosList: Todo[] = [];
 
+// Populate completedTodosList with localStorage
+export const restoreLocalCompletedTodosList = () => {
+
+    // get local storage of completedTodosList
+    localCompletedTodosList = JSON.parse(localStorage.getItem("completedTodosList"));
+
+    // if it's not empty, restore localStorage
+    if (localCompletedTodosList !== null) {
+        // Loop through local storage of completedTodosList. For each todo, create a new Todo and append to completedTodosList.
+        localCompletedTodosList.forEach(todo => {
+            let newTodo = todoModule.newTodo(todo.title, todo.priority, todo.dueDate, todo.parentProject, todo.completed, todo.description);
+            completedTodosList.push(newTodo);
+        });
+    }
+    else {
+        completedTodosList = [];
+    }
+  }
+
+export var todosThatWillPopulateTableArray: Todo[] = [];
 
 // todoModule
 export const todoModule = (() => {
    
-    const newTodo = (title: string, priority: Priority, dueDate: Date, parentProject: string, description?: string) => {
-        let newTodoObject = new Todo(title, priority, dueDate, parentProject, description);
+    const newTodo = (title: string, priority: Priority, dueDate: Date, parentProject: string, completed:boolean, description?: string) => {
+        let newTodoObject = new Todo(title, priority, dueDate, parentProject, completed, description);
         return newTodoObject;
     }
 
@@ -109,16 +128,19 @@ export const todoModule = (() => {
         let expandedTodoToRemove = document.querySelector(`#expanded${targetRow}`);
         expandedTodoToRemove.remove();
 
+        saveLocalStorage();
 
     }
 
     const generateArrayOfTodosBasedOnDate = (date: Date, weekDate?: Date) => {
-        let todosThatWillPopulateTableArray: Todo[] = [];
+
+        // Reset
+        todosThatWillPopulateTableArray = [];
 
         if (!weekDate) {
             listOfProjects.forEach(project => {
                 project.children.forEach(todo => {
-                    if(format(todo.dueDate, 'PP') === format(date, 'PP')) {
+                    if(moment(todo.dueDate).format('YYYY-MM-DD') === moment(date).format('YYYY-MM-DD')) {
                         todosThatWillPopulateTableArray.push(todo);
                     }
                 });
@@ -171,10 +193,24 @@ export const todoModule = (() => {
         expandedTodoToRemove.remove();
         
         projectModule.removeTodoFromProject(todo, todo.parentProject);
+
+        saveLocalStorage();
     }
 
     const clearCompletedTodosList = () => {
         completedTodosList.splice(0, completedTodosList.length);
+        saveLocalStorage();
+    }
+
+    const convertTodoStringDatesIntoDates = (arrayOfTodos: Todo[]) => {
+        // check if todo.dueDate is of type 'string', if so, convert it to Date type (localStorage saves Date as strings)
+        arrayOfTodos.forEach(todo => {
+            if(typeof(todo.dueDate) === 'string') {
+                let correctDateFormat = new Date(todo.dueDate);
+                todo.changeDueDate(correctDateFormat);
+            }
+         });
+         return arrayOfTodos
     }
     
     return {
@@ -184,7 +220,8 @@ export const todoModule = (() => {
         deleteTodo: deleteTodo,
         getTodoByTitle: getTodoByTitle,
         markTodoAsCompleted: markTodoAsCompleted,
-        clearCompletedTodosList: clearCompletedTodosList
+        clearCompletedTodosList: clearCompletedTodosList,
+        convertTodoStringDatesIntoDates: convertTodoStringDatesIntoDates
     }
     
     })();
