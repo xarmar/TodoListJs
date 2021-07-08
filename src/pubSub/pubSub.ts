@@ -2,6 +2,7 @@ import PubSub from 'pubsub-js';
 import { Todo, todoModule } from "../todo";
 import { domGrid } from "../dom/domGrid";
 import { projectModule, listOfProjects, Project } from "../project";
+import { saveLocalStorage } from '../localStorage';
 
 
 // Handles forms submissions and creates Todos and projects based on form input
@@ -43,13 +44,14 @@ export const pubSubModule = (() => {
     const createNewTodo = PubSub.subscribe(newTodoFormSubmission, function(newTodoForm, 
         {title, priority, dueDate, projectTitle, description}) {
 
-        let newTodo = todoModule.newTodo(title, priority, dueDate, projectTitle, description);
+        let newTodo: Todo = todoModule.newTodo(title, priority, dueDate, projectTitle, false, description);
 
         // append todo to project
         projectModule.appendTodoToProject(newTodo, projectTitle);
 
         // populate grid with new Todo.
         domGrid.populateRightGrid(undefined, projectTitle);
+        saveLocalStorage();
     });
 
     // edit an existing todo
@@ -73,12 +75,15 @@ export const pubSubModule = (() => {
         projectModule.appendTodoToProject(todoThatWillBeEdited, projectTitle);
 
         domGrid.populateRightGrid(undefined, projectTitle);
+
+        saveLocalStorage();
     });
     
     const createNewProject = PubSub.subscribe(newProjectFormSubmission, function(newTodoForm, {title}) {
         let newProject = projectModule.newProject(title);
         listOfProjects.push(newProject);
         domGrid.updateSideBarProjects();
+        saveLocalStorage();
     });
 
     const editProject = PubSub.subscribe(editProjectFormSubmission, function(newTodoForm, {title, projectTitle}) {
@@ -99,6 +104,8 @@ export const pubSubModule = (() => {
         // update sidebar and screen with new title
        domGrid.updateSideBarProjects();
        domGrid.populateRightGrid(undefined, newTitle);
+
+       saveLocalStorage();
 
     });
 
