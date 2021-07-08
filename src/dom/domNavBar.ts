@@ -47,7 +47,7 @@ export const domNavBar = (() => {
         });
         
         const history = document.createElement('p');
-        history.innerText = '\u{1F56E}';
+        history.innerText = '⧒';
         history.classList.add('navOption');
         history.setAttribute('title', 'History');
         history.addEventListener('click', function() {
