@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
 import { projectModule, listOfProjects, Project} from "../project";
-import { Todo, todoModule, completedTodosList, todosThatWillPopulateTableArray } from "../todo";
+import { Todo, todoModule, completedTodosList } from "../todo";
 import { helperfunction } from "../helperFunctions";
 import { domForm } from "./domForm";
 import { domNavBar } from "./domNavBar";
