@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
 import { projectModule, listOfProjects, Project} from "../project";
-import { Todo, todoModule, completedTodosList } from "../todo";
+import { Todo, todoModule, completedTodosList, todosThatWillPopulateTableArray } from "../todo";
 import { helperfunction } from "../helperFunctions";
 import { domForm } from "./domForm";
 import { domNavBar } from "./domNavBar";
@@ -35,7 +35,6 @@ export const domGrid = (() => {
     // Populates Left-Grid 
     const populateLeftGrid = () => {
         let stickyLeftDiv = document.querySelector('#stickyLeftDiv');
-    
         const todayTomorrowWeekDiv = document.createElement('div');
         todayTomorrowWeekDiv.id = 'todayTomorrowWeekDiv';
         stickyLeftDiv.appendChild(todayTomorrowWeekDiv);
@@ -169,7 +168,7 @@ export const domGrid = (() => {
         let weekDate = new Date;
         
         // Init array that will populate Table
-        let todosThatWillPopulateTable: Todo[];
+        let todosThatWillPopulateTable: Todo[] = [];
 
         switch (header) {
             case 'Today':
@@ -303,6 +302,9 @@ export const domGrid = (() => {
             const tbody = document.createElement('tbody');
             table.appendChild(tbody);
 
+            // check if todo.dueDate is of type string, if so, convert it to Date type (localStorage saves Date as strings)
+            arrayOfTodos = todoModule.convertTodoStringDatesIntoDates(arrayOfTodos);
+
             // Sort Array by closest dueDate to farthest
             arrayOfTodos.sort((a,b)=>a.dueDate.getTime()- b.dueDate.getTime());
             
@@ -327,7 +329,6 @@ export const domGrid = (() => {
 
                 if (completed) {
                     checkAsComplete.innerText = 'Completed';
-                    checkAsComplete.setAttribute('title', 'Click to mark as Todo.')
                 }
                 else {
                     checkAsComplete.innerText = '\u{2713}'
