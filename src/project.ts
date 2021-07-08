@@ -1,6 +1,7 @@
 import { domGrid } from "./dom/domGrid";
 import { helperfunction } from "./helperFunctions";
-import { Todo } from "./todo";
+import { Todo, todoModule } from "./todo";
+import { saveLocalStorage } from "./localStorage";
 
 export class Project {
     title: string;
@@ -15,9 +16,52 @@ export class Project {
         this.title = newTitle;
     }
 }
+var localStorageListOfProjects: Project[];
+export var listOfProjects: Project[] = [];
 
-export const listOfProjects: Project[] = [];
 
+// Populate listOfProjects with localStorage. If localListofProjects is null, create default Projects with Todos
+export const restoreLocalListOfProjects = () => {
+    // get local storage of listOfProjects
+    localStorageListOfProjects = JSON.parse(localStorage.getItem("listOfProjects"));
+
+    // if it's not empty, restore localStorage
+    if (localStorageListOfProjects !== null) {
+        // Loop through local storage of listOfProjects. For each project: create a new Project + append respective Todos.
+        localStorageListOfProjects.forEach(localStorageProject => {
+            let newProject = projectModule.newProject(localStorageProject.title);
+            localStorageProject.children.forEach(todo => {
+                let newTodo = todoModule.newTodo(todo.title, todo.priority, todo.dueDate, todo.parentProject, todo.completed, todo.description);
+                newProject.children.push(newTodo);
+            });
+            listOfProjects.push(newProject);
+        });
+    }
+    // if localStorage is Null
+    else {
+        listOfProjects = [];
+
+        // Create example dates
+        let exampleDate = new Date;
+        let oneMoreWeek = new Date;
+        oneMoreWeek.setDate(oneMoreWeek.getDate() + 6);
+
+        // Create Default Project
+        let moviesToWatch = 'Movies To Watch';
+        let moviesProject = projectModule.newProject('Movies To Watch', );
+        listOfProjects.push(moviesProject);
+
+        // Create Defaults Todos
+        let rambo: Todo = todoModule.newTodo('Rambo', "low", exampleDate, moviesToWatch, false, 'Love Stallone. Must watch.');
+        projectModule.appendTodoToProject(rambo, moviesToWatch);
+        let terminator: Todo = todoModule.newTodo('Terminator', "high", oneMoreWeek, moviesToWatch, false, "Haven't watched yet");
+        projectModule.appendTodoToProject(terminator, moviesToWatch);
+        let theyLive: Todo = todoModule.newTodo('They Live', "medium", exampleDate, moviesToWatch, false, 'I just ran out of bubblegum :)');
+        projectModule.appendTodoToProject(theyLive, moviesToWatch);
+        let theThing: Todo = todoModule.newTodo('The Thing', 'medium', exampleDate, moviesToWatch, false, "Love scary movies!" );
+        projectModule.appendTodoToProject(theThing, moviesToWatch);
+    }
+  }
 
 export const projectModule = (() => {
 
@@ -47,6 +91,7 @@ export const projectModule = (() => {
         let stickyRightDiv = document.querySelector('#stickyRightDiv');
         helperfunction.removeChildNodes(stickyRightDiv);
 
+        saveLocalStorage();
     }
 
     const appendTodoToProject = (todo: Todo, projectTitle: string) => {
@@ -55,6 +100,7 @@ export const projectModule = (() => {
                 project.children.push(todo);
             }
         });
+        saveLocalStorage();
     }
 
     const removeTodoFromProject = (todo: Todo, parentProjectTitle: string) => {
@@ -65,6 +111,9 @@ export const projectModule = (() => {
         let indexOfTodoToRemove = allTodosInTargetProject.indexOf(todo);
 
         allTodosInTargetProject.splice(indexOfTodoToRemove, 1);
+
+        saveLocalStorage();
+        
     }
 
     const getProjectByTitle = (projectTitle: string) => {
